@@ -1,0 +1,11 @@
+l l l l l l l l l l l l l l l
+l n n n n b b b b b b n n n l
+l n n , ? n n n n n n , ? n l
+l n m ; ! n n n n n n ; ! n l
+l n n n n n n n n n n n n n l
+l n n n n n n n n n n n n n l
+l n n n n n n y u n n n n n l
+l n n n n n n n n n n n n n l
+l n m n n n n n n n n n y u l
+l n n n n n m n n n n n y u l
+l l l l l l l x l l l l l l l

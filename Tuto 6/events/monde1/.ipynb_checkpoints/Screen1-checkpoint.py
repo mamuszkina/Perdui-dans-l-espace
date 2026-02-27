@@ -1,0 +1,402 @@
+import pygame
+
+import config
+from game_state import GameState
+
+
+class portier:
+    def __init__(self, screen, game, player):
+        self.screen = screen
+        self.game = game
+        self.player = player
+        self.prof_image= pygame.image.load("imgs/prof5.png")                       
+        self.dialog = pygame.image.load("imgs/dialog.png")
+
+        self.cut = 0
+        self.max_cut = 11                        
+
+       
+        self.char_delay_ms = 30          #Vitesse défilement texte. 1 = rapide
+        self.current_char = 0
+        self.last_update = 0
+        self.current_dialogue_total_chars = 0
+
+        # --- Nouveaux attributs pour le choix multiple ---
+        self.choice_active = False               # True quand on affiche les choix
+        self.choice_index = 0                    # index du choix sélectionné
+        self.choices = ["0"]
+        self.choices1 = ["Euh je voudrais entrer monsieur s'il vous plaît"]
+        self.choices2 = ["Revenir plus tard", "Passer le test"]
+        self.choices3 = ["Li boulangèri" , "Le boulanger", "La boulangère", "Li boulangère"]
+        self.choices4 = ["Salut, et à demaini", "Au revoir", "Au revoiri"]
+        self.choices5 = ["A ta voisini", "A ti voisini"]
+        self.choices1status = ["attente"]
+        self.choices2status = ["attente"]
+        self.choices3status = ["attente"]
+        self.choices4status = ["attente"]
+        self.choices5status = ["attente"]
+        self.goodbye = False                     # True après "n'hésite pas à revenir"
+
+    def load(self):
+        self.current_char = 0
+        self.last_update = pygame.time.get_ticks()
+
+        # On réinitialise aussi les états de choix à chaque lancement de PNJ1
+        self.choices1status = ["attente"]
+        self.choices2status = ["attente"]
+        self.choices3status = ["attente"]
+        self.choices4status = ["attente"]
+        self.choices5status = ["attente"]
+        self.choice_active = False
+        self.choice_index = 0
+        self.goodbye = False
+  
+    def update(self):
+        if self.cut > self.max_cut:
+            self.game.event = None
+            return
+            
+        elif self.cut == 6:
+            # Le dialogue de portier est terminé : on débloque la case [14,11] du monde 01
+            if hasattr(self.game, "portier_dialogue_done"):
+                self.game.portier_dialogue_done = True
+                self.game.event = None
+        elif self.cut == 8:
+            self.game.event = None
+        elif self.cut == 10:
+            self.game.event = None
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.game.game_state = GameState.ENDED
+
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.game.game_state = GameState.ENDED
+
+                # --- Mode choix actif : flèches + Entrée gèrent le menu ---
+                elif self.choice_active:
+                    if event.key == pygame.K_UP:
+                        self.choice_index = (self.choice_index - 1) % len(self.choices)          # %len(choice)
+                    elif event.key == pygame.K_DOWN:
+                        self.choice_index = (self.choice_index + 1) % len(self.choices)
+                    elif event.key == pygame.K_RETURN:
+                        self.handle_choice()
+
+                # --- Message d'au revoir : Entrée ferme le dialogue ---
+                elif self.goodbye:
+                    if event.key == pygame.K_RETURN:
+                        if self.current_char < self.current_dialogue_total_chars:
+                            self.current_char = self.current_dialogue_total_chars
+                    # 2e ENTER : passer à la case suivante
+                        else: self.game.event = None
+
+                # --- Dialogue normal : Entrée avance les cases ---
+                elif event.key == pygame.K_RETURN:
+                    # 1er ENTER : finir d'afficher le texte
+                    if self.current_char < self.current_dialogue_total_chars:
+                        self.current_char = self.current_dialogue_total_chars
+                    # 2e ENTER : passer à la case suivante
+                    else:
+                        self.cut += 1
+                        self.current_char = 0
+                        self.last_update = pygame.time.get_ticks()
+
+        # Mise à jour du texte "machine à écrire"
+        now = pygame.time.get_ticks()
+        if now - self.last_update > self.char_delay_ms:
+            self.current_char += 1
+            self.last_update = now
+
+        
+        if (
+            self.cut == 1
+            and self.choices1status == ["attente"]
+            and not self.goodbye
+            and not self.choice_active
+        ):
+            self.choices = self.choices1
+            if self.game.panneau2_Indice_dialogue_done == True:
+                self.choices = self.choices + ["C'est pour aller voir Gandalf"]
+            self.choice_active = True
+            self.choice_index = 0
+        elif (
+            self.cut == 2
+            and self.choices2status == ["attente"]
+            and not self.goodbye
+            and not self.choice_active
+        ):
+            self.choices = self.choices2
+            self.choice_active = True
+            self.choice_index = 0
+        elif (
+            self.cut == 3
+            and self.choices3status == ["attente"]
+            and not self.goodbye
+            and not self.choice_active
+        ):
+            self.choices = self.choices3
+            self.choice_active = True
+            self.choice_index = 0
+        elif (
+            self.cut == 4
+            and self.choices4status == ["attente"]
+            and not self.goodbye
+            and not self.choice_active
+        ):
+            self.choices = self.choices4
+            self.choice_active = True
+            self.choice_index = 0
+        elif (
+            self.cut == 5
+            and self.choices5status == ["attente"]
+            and not self.goodbye
+            and not self.choice_active
+        ):
+            self.choices = self.choices5
+            self.choice_active = True
+            self.choice_index = 0
+    
+    def render(self):
+        # Si on a choisi "non" -> message d'au revoir
+        if self.goodbye:
+            self.render_goodbye()
+            return
+
+        # Si le menu de choix est actif, on l'affiche par-dessus le reste
+        if self.choice_active:
+            self.render_choice()
+            return
+            
+        if self.cut == 0:
+            self.render_scene_0()
+        elif self.cut == 1:
+            self.render_scene_1()
+        elif self.cut == 2:
+            self.render_scene_2()
+        elif self.cut == 3:
+            self.render_scene_3()
+        elif self.cut == 4:
+            self.render_scene_4()
+        elif self.cut == 5:
+            self.render_scene_5()
+        elif self.cut == 6:
+            self.render_scene_6()
+        elif self.cut == 7:
+            self.render_scene_7()
+        elif self.cut == 8:
+            self.render_scene_8()
+        elif self.cut == 9:
+            self.render_scene_9()
+        elif self.cut == 10:
+            self.render_scene_10()
+        elif self.cut == 11:
+            self.render_scene_11()
+
+    @staticmethod   # to avoid that the following function reads self automatically
+    def wrap_text(text, font, max_width):
+        words = text.split()
+        lines = []
+        current = ""
+
+        for word in words:
+            test = (current + " " + word).strip()
+            if font.size(test)[0] <= max_width:
+                current = test
+            else:
+                if current:
+                    lines.append(current)
+                current = word
+
+        if current:
+            lines.append(current)
+        return lines
+
+    # create a function for dialogue box
+    def _render_dialogue_box(self, text):
+        dialogue_rect = self.screen.blit(self.dialog, (0, 450))      # chiffres = position bulle de dialogue
+
+        font = pygame.font.Font("fonts/PokemonGb.ttf", 20)           #20 = taille des lettres
+        color = config.BLUE
+
+        wrapped = self.wrap_text(text, font, dialogue_rect.width - 60) #Décalage à droite de la bulle de dialogue
+        self.current_dialogue_total_chars = sum(len(line) + 1 for line in wrapped)
+
+        chars_left = self.current_char
+        y = dialogue_rect.y + 30                                      # 30 = décalage avec le haut
+
+        for line in wrapped:
+            if chars_left <= 0:
+                break
+            visible = line[:chars_left]
+            surf = font.render(visible, True, color)
+            self.screen.blit(surf, (dialogue_rect.x + 30, y))         # chiffre, y = décalage début de bulle
+            chars_left -= len(line) + 1
+            y += font.get_height() + 6 
+
+    # --- NOUVEAU : rendu du menu de choix ---
+    def render_choice(self):
+        dialogue_rect = self.screen.blit(self.dialog, (0, 450))
+
+        font = pygame.font.Font("fonts/PokemonGbAnswer.ttf", 20)
+        color = config.BLACK
+
+        # --- Question ---
+        question = ""
+        surf_q = font.render(question, True, color)
+        self.screen.blit(surf_q, (dialogue_rect.x + 30, dialogue_rect.y + 20))
+
+        # Positions de base
+        y = dialogue_rect.y + 60
+        x_text = dialogue_rect.x + 50                      
+        x_arrow = dialogue_rect.x + 40
+
+        for i, choice in enumerate(self.choices):
+            # --- Ajout du > uniquement sur la ligne sélectionnée ---
+            if i == self.choice_index:
+                display_text = choice
+            else:
+                display_text = choice
+
+            surf = font.render(display_text, True, color)
+            self.screen.blit(surf, (x_text, y))
+
+            # --- Flèche rouge pour le choix sélectionné ---
+            if i == self.choice_index:
+                arrow_points = [
+                    (x_arrow, y + 8),        # pointe
+                    (x_arrow - 10, y + 2),   # haut
+                    (x_arrow - 10, y + 14),  # bas
+                ]
+                pygame.draw.polygon(self.screen, (255, 0, 0), arrow_points)
+
+            y += font.get_height() + 8    
+
+
+    def render_goodbye(self):
+        self._render_dialogue_box("Hé, ici on est sérieusi à la Scène Errès ! Donc soit vous apprenez à bien parler, soit vous restez dehors !") 
+
+    def handle_choice(self):
+        choices = self.choices[self.choice_index]
+
+        if choices == "Euh je voudrais entrer monsieur s'il vous plaît":
+            self.choice_active = False
+            self.goodbye = True
+            self.current_char = 0
+            self.last_update = pygame.time.get_ticks()
+
+        elif choices == "C'est pour aller voir Gandalf":
+            self.choice_active = False
+            self.choices1status = ["fini"]
+            self.goodbye = False
+            self.current_char = 0
+            self.last_update = pygame.time.get_ticks()
+
+        elif choices == "Revenir plus tard":
+            self.choice_active = False
+            self.cut = 8
+            self.current_char = 0
+            self.last_update = pygame.time.get_ticks()
+
+        elif choices == "Passer le test":
+            self.choice_active = False
+            self.choices2status = ["fini"]
+            self.goodbye = False
+            self.current_char = 0
+            self.last_update = pygame.time.get_ticks()
+
+        elif choices == "Li boulangère":
+            self.choice_active = False
+            self.cut = 7
+            self.current_char = 0
+            self.last_update = pygame.time.get_ticks()
+            print(self.cut)
+
+        elif choices == "Le boulanger":
+            self.choice_active = False
+            self.cut = 7
+            self.current_char = 0
+            self.last_update = pygame.time.get_ticks()
+
+        elif choices == "La boulangère":
+            self.choice_active = False
+            self.cut = 7
+            self.current_char = 0
+            self.last_update = pygame.time.get_ticks()
+
+        elif choices == "Li boulangèri":
+            self.choice_active = False
+            self.choices3status = ["fini"]
+            self.current_char = 0
+            self.last_update = pygame.time.get_ticks()
+
+        elif choices == "Salut, et à demaini":
+            self.choice_active = False
+            self.cut = 9
+            self.goodbye = False
+            self.current_char = 0
+            self.last_update = pygame.time.get_ticks()
+
+        elif choices == "Au revoir":
+            self.choice_active = False
+            self.choices4status = ["fini"]
+            self.goodbye = False
+            self.current_char = 0
+            self.last_update = pygame.time.get_ticks()
+
+        elif choices == "Au revoiri":
+            self.choice_active = False
+            self.cut = 9
+            self.goodbye = False
+            self.current_char = 0
+            self.last_update = pygame.time.get_ticks()
+
+        elif choices == "A ta voisini":
+            self.choice_active = False
+            self.cut = 11
+            self.goodbye = False
+            self.current_char = 0
+            self.last_update = pygame.time.get_ticks()
+
+        elif choices == "A ti voisini":
+            self.choice_active = False
+            self.choices5status = ["fini"]
+            self.goodbye = False
+            self.current_char = 0
+            self.last_update = pygame.time.get_ticks()
+    
+    def render_scene_0(self):
+        self._render_dialogue_box("Holà, on rentre pas ici sans une bonne raison. Vous êtes là pour quoi ?")
+
+    def render_scene_1(self):
+        self._render_dialogue_box("Pour rentrer à la Scène Errès, il faut montrer que vous savez bien parler, on laisse pas rentrer n’importe qui ! Sinon jvais encore me faire sermonner...")
+
+    def render_scene_2(self):
+        self._render_dialogue_box("Vous êtes prêti ? Bien ! Comment vous nommez la personne chez qui vous achetez du pain ?")
+
+    def render_scene_3(self):
+        self._render_dialogue_box("Bien. Et qu’est-ce que vous lui dites en partant ?")
+
+    def render_scene_4(self):        
+        self._render_dialogue_box("Pas mal, pas mal. Dernière question. Mi voisini m'a prêté les clefs de sa voiture. Quand j'ai fini de l'utiliser, à qui je rend les clefs ?")
+
+    def render_scene_5(self):
+        self._render_dialogue_box("Hé, mais t’es devenu uni pro ! Je suis super fieri de toi ! Allez, passes va, file voir Gandalf, ça devrait arranger tes problèmes !")
+
+    def render_scene_6(self):
+        self._render_dialogue_box("") # IL DOIT SE PASSER QUELQUE CHOSE QUAND ON ARRIVE ICI, LE PNJ DOIT SE DECALER 
+
+    def render_scene_7(self):
+        self._render_dialogue_box("Nan, désolé. Retourne lire les écriteaux, vas parler aux gens, reviens quand tu seras prêti. Et comme je suis d’humeur magnanime, voilà un petit indice... T’as vu qu'on ne peut pas deviner en parlant qui est un homme ou une femme ?")
+
+    def render_scene_8(self):
+        self._render_dialogue_box("")
+
+    def render_scene_9(self):
+        self._render_dialogue_box("Ah non, désoléi bonhommi. Mais si ça peut t'aider, t'as remarqué que c'est seulement quand le mot donne un indice sur le genre d'une personne qu'il change ?")
+
+    def render_scene_10(self):
+        self._render_dialogue_box("")
+
+    def render_scene_11(self):
+        self._render_dialogue_box("Nooooon... Tu y es presque ! Pour parler d’une personne genrée, utilise le mot féminin, et met un i à la fin du mot. Tiens, un petit indice pour t’aider (lien vers le traducteur ?)")

@@ -1,0 +1,23 @@
+Connection: close
+Content-Length: 13453758
+Server: GitHub.com
+Content-Type: application/wasm
+Last-Modified: Mon, 23 Feb 2026 16:00:05 GMT
+Access-Control-Allow-Origin: *
+Strict-Transport-Security: max-age=31556952
+ETag: "699c7985-cd49be"
+expires: Tue, 24 Feb 2026 13:53:18 GMT
+Cache-Control: max-age=600
+x-proxy-cache: MISS
+X-GitHub-Request-Id: 64E4:2520CA:9AB50A:9D801B:699DAAF4
+Accept-Ranges: bytes
+Age: 0
+Date: Tue, 24 Feb 2026 14:16:12 GMT
+Via: 1.1 varnish
+X-Served-By: cache-lcy-egml8630026-LCY
+X-Cache: HIT
+X-Cache-Hits: 0
+X-Timer: S1771942572.138808,VS0,VE87
+Vary: Accept-Encoding
+X-Fastly-Request-ID: 59893f8f1405e736eb68cfa35be016fc9d383e9c
+
