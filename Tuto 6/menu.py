@@ -25,13 +25,9 @@ class Menu:
         for event in events:
             if event.type == pygame.QUIT:
                 self.game.game_state = GameState.ENDED
-            #     handle key events
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.game.game_state = GameState.ENDED
-                elif event.key == pygame.K_RETURN: # up
+                elif event.key == pygame.K_RETURN:
                     self.game.set_up()
                     self.game.game_state = GameState.RUNNING
-            elif event.type in (pygame.VIDEORESIZE, getattr(pygame, "WINDOWSIZECHANGED", -1)):
-                # Ensure we keep drawing to the current display surface
-                self.screen = pygame.display.get_surface()

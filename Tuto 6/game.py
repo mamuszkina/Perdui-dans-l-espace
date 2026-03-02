@@ -449,7 +449,7 @@ class Game:
                 self.screen.fill(config.BLACK)
                 self.map.render(self.screen, self.player)
 
-            for ev in pygame.event.get():
+            for ev in events:
                 if ev.type == pygame.QUIT:
                     self.game_state = GameState.ENDED
                 else:
@@ -493,7 +493,7 @@ class Game:
                 # If an overlay was opened, pause the cutscene and only handle the overlay UI
 
                 if self.pokedex_open:
-                    for ev in pygame.event.get():
+                    for ev in events:
                         if ev.type == pygame.QUIT:
                             self.game_state = GameState.ENDED
                         else:
@@ -502,7 +502,7 @@ class Game:
                     return
 
                 if self.confirm_quit:
-                    for ev in pygame.event.get():
+                    for ev in events:
                         if ev.type == pygame.QUIT:
                             self.game_state = GameState.ENDED
                         else:
