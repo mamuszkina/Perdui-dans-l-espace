@@ -425,7 +425,9 @@ class Game:
                 self.screen.fill(config.BLACK)
                 self.map.render(self.screen, self.player)
 
-            for ev in pygame.event.get():
+            for ev in events:
+                if ev.type in (pygame.VIDEORESIZE, getattr(pygame, "WINDOWSIZECHANGED", -1)):
+                    self.screen = pygame.display.get_surface()
                 if ev.type == pygame.QUIT:
                     self.game_state = GameState.ENDED
                 else:

@@ -22,7 +22,7 @@ class Menu:
         rect = pygame.Rect(1, 1, 2, 2)
         self.screen.blit(self.menu_image, rect)
 
-        for event in pygame.event.get():
+        for event in events:
             if event.type == pygame.QUIT:
                 self.game.game_state = GameState.ENDED
             #     handle key events
@@ -32,3 +32,6 @@ class Menu:
                 elif event.key == pygame.K_RETURN: # up
                     self.game.set_up()
                     self.game.game_state = GameState.RUNNING
+            elif event.type in (pygame.VIDEORESIZE, getattr(pygame, "WINDOWSIZECHANGED", -1)):
+                # Ensure we keep drawing to the current display surface
+                self.screen = pygame.display.get_surface()
