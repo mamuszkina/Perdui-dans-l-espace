@@ -13,11 +13,11 @@ def running_in_browser() -> bool:
     return sys.platform == "emscripten"
 
 if running_in_browser():
-    # Web: fixed logical size, scaled to canvas, no cropping on F11
-    flags = pygame.SCALED | pygame.RESIZABLE
-    screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), flags)
+    # Web (pygbag): fixed logical resolution, scaled to the browser canvas.
+    # Avoid RESIZABLE (often problematic in pygbag).
+    screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT), pygame.SCALED)
 else:
-    # Desktop: real fullscreen
+    # Desktop: true fullscreen at monitor resolution
     screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
     config.SCREEN_WIDTH, config.SCREEN_HEIGHT = screen.get_size()
 
@@ -27,11 +27,6 @@ pygame.mixer.init()
 #pygame.mixer.music.set_volume(60)                       #Monter le son : +X 
 #pygame.mixer.music.play(-1)
 
-FLAGS = pygame.SCALED | pygame.RESIZABLE
-screen = pygame.display.set_mode(
-    (config.SCREEN_WIDTH, config.SCREEN_HEIGHT),
-    FLAGS
-)
 
 pygame.display.set_caption("Perdu dans l'espace")
 
