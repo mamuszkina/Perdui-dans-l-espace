@@ -775,6 +775,10 @@ class portier3:
     def render_goodbye(self):
         self._render_dialogue_box("Tu ne veux pas essayer ? Tant pis. Reviens tenter quand tu veux !")
         self.screen.blit(self.charlie_gray, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
+        if self.pokemon_played:
+            self.pokemon_sound.stop()
+            self.game.mondes123.set_volume(0.8)
+            self.pokemon_played = False
 
     # --- NOUVEAU : logique des réponses ---
     def handle_choice(self):
