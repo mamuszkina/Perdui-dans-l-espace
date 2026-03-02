@@ -377,7 +377,7 @@ class Game:
             y += font.get_height() + 8
 
     
-    def update(self):
+    def update(self, events):
         if self.fin_de_jeu == True:
             self.game_state = GameState.ENDED
         

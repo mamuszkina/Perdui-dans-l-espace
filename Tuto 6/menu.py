@@ -17,7 +17,7 @@ class Menu:
         self.menu_image = pygame.image.load("imgs/menu.png").convert_alpha()
         self.menu_image = pygame.transform.scale(self.menu_image, (config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
 
-    def update(self):
+    def update(self, events):
         self.screen.fill(config.BLACK)
         rect = pygame.Rect(1, 1, 2, 2)
         self.screen.blit(self.menu_image, rect)
