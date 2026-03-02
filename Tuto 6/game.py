@@ -377,7 +377,7 @@ class Game:
             y += font.get_height() + 8
 
     
-    def update(self, events):
+    def update(self):
         if self.fin_de_jeu == True:
             self.game_state = GameState.ENDED
         
@@ -425,9 +425,7 @@ class Game:
                 self.screen.fill(config.BLACK)
                 self.map.render(self.screen, self.player)
 
-            for ev in events:
-                if ev.type in (pygame.VIDEORESIZE, getattr(pygame, "WINDOWSIZECHANGED", -1)):
-                    self.screen = pygame.display.get_surface()
+            for ev in pygame.event.get():
                 if ev.type == pygame.QUIT:
                     self.game_state = GameState.ENDED
                 else:
@@ -449,7 +447,7 @@ class Game:
                 self.screen.fill(config.BLACK)
                 self.map.render(self.screen, self.player)
 
-            for ev in events:
+            for ev in pygame.event.get():
                 if ev.type == pygame.QUIT:
                     self.game_state = GameState.ENDED
                 else:
@@ -493,7 +491,7 @@ class Game:
                 # If an overlay was opened, pause the cutscene and only handle the overlay UI
 
                 if self.pokedex_open:
-                    for ev in events:
+                    for ev in pygame.event.get():
                         if ev.type == pygame.QUIT:
                             self.game_state = GameState.ENDED
                         else:
@@ -502,7 +500,7 @@ class Game:
                     return
 
                 if self.confirm_quit:
-                    for ev in events:
+                    for ev in pygame.event.get():
                         if ev.type == pygame.QUIT:
                             self.game_state = GameState.ENDED
                         else:
