@@ -12,11 +12,11 @@ pygame.mixer.music.load("a_druidesa.ogg")
 pygame.mixer.music.set_volume(60)                       #Monter le son : +X 
 pygame.mixer.music.play(-1)
 
-#pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT)) si pas fullscreen
-#CHANGER LA TAILLE DE L'ECRAN POUR UN FULLSIZE, remplacer par : screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-# IMPORTANT: si FULLSCREEN synchroniser la config avec la vraie taille de l'écran
-config.SCREEN_WIDTH, config.SCREEN_HEIGHT = screen.get_size()
+FLAGS = pygame.SCALED | pygame.RESIZABLE
+screen = pygame.display.set_mode(
+    (config.SCREEN_WIDTH, config.SCREEN_HEIGHT),
+    FLAGS
+)
 
 pygame.display.set_caption("Perdu dans l'espace")
 
