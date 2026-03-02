@@ -36,10 +36,16 @@ menu.set_up()
 while game.game_state != GameState.ENDED:
     clock.tick(40)
 
+    events = pygame.event.get()
+
+    for event in events:
+        if event.type == pygame.QUIT:
+            game.game_state = GameState.ENDED
+
     if game.game_state == GameState.NONE:
-        menu.update()
+        menu.update(events)
 
     if game.game_state == GameState.RUNNING:
-        game.update()
+        game.update(events)
 
     pygame.display.flip()
