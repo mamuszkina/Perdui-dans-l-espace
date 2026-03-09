@@ -5,8 +5,13 @@ from game import Game
 from menu import Menu
 from game_view.map import Map
 
+pygame.mixer.pre_init(44100, -16, 2, 1024)
 pygame.init()
-pygame.mixer.init()
+
+if not pygame.mixer.get_init():
+    pygame.mixer.init()
+
+pygame.mixer.set_num_channels(16)
 
 #pygame.mixer.music.load("a_druidesa.ogg")
 #pygame.mixer.music.set_volume(60)                       #Monter le son : +X 

@@ -12,7 +12,6 @@ from game_state import GameState, CurrentGameState
 from game_view.map import Map
 from game_view.Pokédex_design import PokedexUI
 
-pygame.mixer.init()
 
 class Game:
     def __init__(self, screen):
@@ -33,18 +32,20 @@ class Game:
         self.quit_choices = ['Oui', 'Non']
         self.quit_choice_index = 0
         self._prev_esc_pressed = False
+        self.game_closed = False
 
-        #musiques
-        self.intro = pygame.mixer.Sound("sons/a_druidesa.ogg")
+        # musiques
+        self.intro = "sons/a_druidesa.ogg"
         self.intro_played = False
-        self.intro.set_volume(0.8)   # entre 0.0 et 1.0
-        self.mondes123 = pygame.mixer.Sound("sons/monde123.ogg")
-        self.mondes123_played = False
-        self.mondes123.set_volume(0.8)   # entre 0.0 et 1.0
-        self.mondes456 = pygame.mixer.Sound("sons/monde456.ogg")
-        self.mondes456_played = False
-        self.mondes456.set_volume(0.4)   # entre 0.0 et 1.0
+        self.intro_volume = 0.8
 
+        self.mondes123 = "sons/monde123.ogg"
+        self.mondes123_played = False
+        self.mondes123_volume = 0.8
+
+        self.mondes456 = "sons/monde456.ogg"
+        self.mondes456_played = False
+        self.mondes456_volume = 0.4
 
                 # --- Pokedex (citations PNJ) ---
         self.pokedex_open = False
@@ -175,6 +176,25 @@ class Game:
         # To make the player slower, increase self.move_delay (e.g. 150, 180, 200).
         self.move_delay = 120      # milliseconds between tile moves (higher = slower)
         self.last_move_time = 0    # timestamp of last movement
+
+    def play_music(self, path, volume=0.8):
+        if not pygame.mixer.get_init():
+            return
+
+        try:
+            current = getattr(self, "_current_music", None)
+            if current != path:
+                pygame.mixer.music.stop()
+                pygame.mixer.music.load(path)
+                pygame.mixer.music.set_volume(volume)
+                pygame.mixer.music.play(-1)
+                self._current_music = path
+            else:
+                if not pygame.mixer.music.get_busy():
+                    pygame.mixer.music.set_volume(volume)
+                    pygame.mixer.music.play(-1)
+        except pygame.error as e:
+            print(f"Music error: {e}")
 
     def set_up(self):                     
         player = Player(1, 1)                    #Position du carré UNIQUEMENT si la position n'est pas indiquée dans la map (config)
@@ -330,7 +350,8 @@ class Game:
             if ev.key in (pygame.K_RETURN, pygame.K_SPACE):
                 choice = self.quit_choices[self.quit_choice_index]
                 if choice.lower().startswith("oui"):
-                    self.game_state = GameState.ENDED
+                    self.close_game_web()
+                    self.confirm_quit = False
                 else:
                     self.confirm_quit = False
                 return
@@ -338,7 +359,8 @@ class Game:
         if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
             _, yes_rect, no_rect = self._get_quit_choice_rects()
             if yes_rect.collidepoint(ev.pos):
-                self.game_state = GameState.ENDED
+                self.close_game_web()
+                self.confirm_quit = False
             elif no_rect.collidepoint(ev.pos):
                 self.confirm_quit = False
 
@@ -376,35 +398,60 @@ class Game:
                 pygame.draw.polygon(self.screen, (255, 0, 0), arrow_points)
             y += font.get_height() + 8
 
+    def close_game_web(self):
+        self.confirm_quit = False
+        self.game_closed = True
+
+        # stop music
+        if pygame.mixer.get_init():
+            try:
+                pygame.mixer.music.stop()
+            except pygame.error:
+                pass
+
+    def render_game_closed(self):
+        self.screen.fill((0, 0, 0))
+
+        font = pygame.font.Font("fonts/PokemonGb.ttf", 28) if os.path.exists("fonts/PokemonGb.ttf") else pygame.font.Font(None, 48)
+
+        text = font.render("Game closed", True, (255, 255, 255))
+        rect = text.get_rect(center=(self.screen.get_width()//2, self.screen.get_height()//2))
+
+        self.screen.blit(text, rect)
     
     def update(self):
+
+        if self.game_closed:
+            self.render_game_closed()
+
+            # on vide les événements pour éviter tout comportement parasite
+            for ev in pygame.event.get():
+                if ev.type == pygame.QUIT:
+                    pass
+
+            return
+        
         if self.fin_de_jeu == True:
             self.game_state = GameState.ENDED
         
-        if getattr (self.map, "file_name", None) in {"01", "monde7", "monde7_N"} \
-        and self.intro_played == False :
-            self.intro.play(-1)
+        if getattr(self.map, "file_name", None) in {"01", "monde7", "monde7_N"} \
+        and self.intro_played == False:
+            self.play_music(self.intro, self.intro_volume)
             self.intro_played = True
-            self.mondes123.stop()
-            self.mondes456.stop()
             self.mondes456_played = False
             self.mondes123_played = False
             
-        if getattr (self.map, "file_name", None) in {"monde1", "monde1_N", "monde2", "monde2_N", "monde3", "monde3_N"} \
-        and self.mondes123_played == False :
-            self.mondes123.play(-1)
+        if getattr(self.map, "file_name", None) in {"monde1", "monde1_N", "monde2", "monde2_N", "monde3", "monde3_N"} \
+        and self.mondes123_played == False:
+            self.play_music(self.mondes123, self.mondes123_volume)
             self.mondes123_played = True
-            self.intro.stop()
-            self.mondes456.stop()
             self.intro_played = False
             self.mondes456_played = False
 
-        if getattr (self.map, "file_name", None) in {"monde4", "monde4_N", "monde5", "monde5_N", "monde6", "monde6_N"} \
-        and self.mondes456_played == False :
-            self.mondes456.play(-1)
+        if getattr(self.map, "file_name", None) in {"monde4", "monde4_N", "monde5", "monde5_N", "monde6", "monde6_N"} \
+        and self.mondes456_played == False:
+            self.play_music(self.mondes456, self.mondes456_volume)
             self.mondes456_played = True
-            self.intro.stop()
-            self.mondes123.stop()
             self.intro_played = False
             self.mondes123_played = False
             
@@ -434,12 +481,14 @@ class Game:
             self.pokedex_ui.render()
             return
 
-        # --- Quit confirmation (ESC) : edge-detected like Pokedex ---
-        keys = pygame.key.get_pressed()
-        esc_pressed = keys[pygame.K_ESCAPE]
-        if esc_pressed and not self._prev_esc_pressed:
-            self._activate_quit_choice()
-        self._prev_esc_pressed = esc_pressed
+        # --- Quit confirmation (ESC) ---
+        # IMPORTANT:
+        # On ouvre la fenêtre de confirmation uniquement sur KEYDOWN
+        # (dans handle_events() ou dans le bloc tapped_events pendant les dialogues).
+        # En version navigateur / pygbag, l'ancienne logique basée sur
+        # pygame.key.get_pressed() ouvrait la fenêtre, puis le même événement ESC
+        # était relu juste après par _handle_quit_choice_event(), ce qui la refermait
+        # immédiatement : résultat, la fenêtre "flashe" mais on ne peut pas cliquer.
 
         # If quit choice is open, pause the game and only handle quit UI
         if self.confirm_quit:

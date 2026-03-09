@@ -4,7 +4,6 @@ import config
 from game_state import GameState
 from game_state import grayscale
 
-pygame.mixer.init()
 
 class PNJ1:
     def __init__(self, screen, game, player):
@@ -239,7 +238,7 @@ class PNJ1:
 
     def render_scene_3(self):
         if not self.lightning_played:
-            self.game.intro.set_volume(0)          # Pause la musique de fond
+            pygame.mixer.music.set_volume(0)          # Pause la musique de fond
             self.lightning_sound.play()         # Joue le tonnerre
             self.lightning_played = True
         self._render_dialogue_box_Lightning("KABOOM")
@@ -249,7 +248,7 @@ class PNJ1:
         # et on remet la musique de fond
         if self.lightning_played:
             self.lightning_sound.stop()
-            self.game.intro.set_volume(0.8)
+            pygame.mixer.music.set_volume(self.game.intro_volume)
             self.lightning_played = False
         self._render_dialogue_box_Answer("Mais c'est quoi ça ??!")
         self.screen.blit(self.charlie_surpris, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))

@@ -59,7 +59,7 @@ class Gandalf2:
             # specify has teleported already
             self.has_teleported = True
             self.lightning_sound.stop()
-            self.game.mondes123.set_volume(0.8)
+            pygame.mixer.music.set_volume(self.game.mondes123_volume)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -276,7 +276,7 @@ class Gandalf2:
 
     def render_scene_9(self):
         if not self.lightning_played:
-            self.game.mondes123.set_volume(0)          # Pause la musique de fond
+            pygame.mixer.music.set_volume(0)         # Pause la musique de fond
             self.lightning_sound.play()         # Joue le tonnerre
             self.lightning_played = True
         self._render_dialogue_box_Lightning("KABOOM")

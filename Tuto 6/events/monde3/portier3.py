@@ -777,7 +777,7 @@ class portier3:
         self.screen.blit(self.charlie_gray, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
         if self.pokemon_played:
             self.pokemon_sound.stop()
-            self.game.mondes123.set_volume(0.8)
+            pygame.mixer.music.set_volume(self.game.mondes123_volume)
             self.pokemon_played = False
 
     # --- NOUVEAU : logique des réponses ---
@@ -1202,7 +1202,7 @@ class portier3:
         self.battle_portier3()
         self._render_dialogue_box_Battle("Portier 3 veut se battre avec vous !")
         if not self.pokemon_played:
-            self.game.mondes123.set_volume(0)          # Pause la musique de fond
+            pygame.mixer.music.set_volume(0)         # Pause la musique de fond
             self.pokemon_sound.play(-1)         # Joue le tonnerre
             self.pokemon_played = True
 
@@ -1348,7 +1348,7 @@ class portier3:
     def render_scene_80(self):
         if self.pokemon_played:
             self.pokemon_sound.stop()
-            self.game.mondes123.set_volume(0.8)
+            pygame.mixer.music.set_volume(self.game.mondes123_volume)
             self.pokemon_played = False
         self._render_dialogue_box("Ouah tu es vraiment devenu eune pro ! Bravo à toi, tu peux aller voir Gandalf, encore bravo hein !")
         self.screen.blit(self.charlie_content_gray, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
@@ -1362,7 +1362,7 @@ class portier3:
         self.screen.blit(self.charlie_mécontent_gray, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
         if self.pokemon_played:
             self.pokemon_sound.stop()
-            self.game.mondes123.set_volume(0.8)
+            pygame.mixer.music.set_volume(self.game.mondes123_volume)
             self.pokemon_played = False
         
     def render_scene_83(self):
