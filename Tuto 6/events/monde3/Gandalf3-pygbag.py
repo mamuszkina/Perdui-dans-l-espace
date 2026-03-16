@@ -80,7 +80,7 @@ class Gandalf3:
             self.game.event = None
             self.has_teleported = True
             self.lightning_sound.stop()
-            self.game.mondes123.set_volume(0.8)
+            pygame.mixer.music.set_volume(self.game.mondes123_volume)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -760,7 +760,7 @@ class Gandalf3:
         self._render_dialogue_box("Je le savais ! Quels mufles ! ça devait bien arriver un jour ! Ils ont déchiré l'espace-temps !")
         self.screen.blit(self.charlie_gray, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
         if not self.drama_played:
-            self.game.mondes123.set_volume(0)          # Pause la musique de fond
+            pygame.mixer.music.set_volume(0)         # Pause la musique de fond
             self.drama_sound.play()         # Joue le tonnerre
             self.drama_played = True
         
@@ -796,7 +796,7 @@ class Gandalf3:
     def render_scene_51(self):
         if self.lightning_played:
             self.lightning_sound.stop()
-            self.game.mondes123.set_volume(0.8)
+            pygame.mixer.music.set_volume(self.game.mondes123_volume)
             self.lightning_played = False
         self._render_dialogue_box(".................................. C'est bon ! ça a marché ! Tout est remis en place !")
         self.screen.blit(self.charlie_gray, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
@@ -879,7 +879,7 @@ class Gandalf3:
 
     def render_scene_71(self):
         if not self.lightning_played:
-            self.game.mondes123.set_volume(0)          # Pause la musique de fond
+            pygame.mixer.music.set_volume(0)          # Pause la musique de fond
             self.lightning_sound.play()         # Joue le tonnerre
             self.lightning_played = True
         self._render_dialogue_box_Lightning("KABOOM")

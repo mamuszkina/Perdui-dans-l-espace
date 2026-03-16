@@ -871,7 +871,7 @@ class Gandalf6:
         
     def render_scene_47(self):
         if not self.lightning_played:
-            self.game.mondes456.set_volume(0)          # Pause la musique de fond
+            pygame.mixer.music.set_volume(0)          # Pause la musique de fond
             self.lightning_sound.play()         # Joue le tonnerre
             self.lightning_played = True
         self._render_dialogue_box_Lightning("KABOOM")

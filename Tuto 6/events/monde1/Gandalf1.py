@@ -78,7 +78,7 @@ class Gandalf1:
             # specify has teleported already
             self.has_teleported = True
             self.lightning_sound.stop()
-            self.game.mondes123.set_volume(0.8)
+            pygame.mixer.music.set_volume(self.game.mondes123_volume)
             self.game.event = None
             return
 
@@ -480,7 +480,7 @@ class Gandalf1:
 
     def render_scene_12(self):
         if not self.drama_played:
-            self.game.mondes123.set_volume(0)          # Pause la musique de fond
+            pygame.mixer.music.set_volume(0)         # Pause la musique de fond
             self.drama_sound.play()         # Joue le tonnerre
             self.drama_played = True
         self._render_dialogue_box("Non mais oui, je sais, mais vous ne devez pas venir d’ici, je veux dire, de cette planète.")

@@ -65,7 +65,7 @@ class Fantome_du_lac:
         elif self.cut > self.max_cut:
             if hasattr(self.game, "Fantome_du_lac_dialogue_done"):          #hasattr = si il a un attribut (une variable) qui s'appelle "fantomedulac"
                 self.game.Fantome_du_lac_dialogue_done = True
-                self.game.mondes123.set_volume(0.8)
+                pygame.mixer.music.set_volume(self.game.mondes123_volume)
                 self.game.event = None
 
         for event in pygame.event.get():
