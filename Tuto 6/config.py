@@ -10,8 +10,8 @@ BLUE = (25,82,191)
 
 SCALE = 70                                        #Zoom de l'image : 65 ou 75
 
-SCREEN_HEIGHT = 700
-SCREEN_WIDTH = 900
+SCREEN_HEIGHT = 1080
+SCREEN_WIDTH = 1920
 
 MAP_TILE_GRASS = "G"
 MAP_TILE_GRASS2 = "O"

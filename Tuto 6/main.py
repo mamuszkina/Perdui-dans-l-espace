@@ -14,7 +14,7 @@ pygame.mixer.init()
 
 #pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT)) si pas fullscreen
 #CHANGER LA TAILLE DE L'ECRAN POUR UN FULLSIZE, remplacer par : screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
-screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+screen = pygame.display.set_mode((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
 # IMPORTANT: si FULLSCREEN synchroniser la config avec la vraie taille de l'écran
 config.SCREEN_WIDTH, config.SCREEN_HEIGHT = screen.get_size()
 

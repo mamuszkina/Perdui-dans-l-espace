@@ -129,4 +129,4 @@ class Panneau0:
             y += font.get_height() + 6 
     
     def render_scene_0(self):
-        self._render_dialogue_box("CROISANTS TOUT CHAUDS DANS VOTRE BOULANGERIE PREFEREE EN BAS DE LA VILLE. SUIVEZ LA ROUTE POUR VOUS Y RENDRE.")
+        self._render_dialogue_box("CROISSANTS TOUT CHAUDS DANS VOTRE BOULANGERIE PREFEREE EN BAS DE LA VILLE. SUIVEZ LA ROUTE POUR VOUS Y RENDRE.")
