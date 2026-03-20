@@ -32,7 +32,7 @@ class portier4:
         self.charlie_content = pygame.image.load("imgs/characters/C_content.png").convert_alpha()
         self.charlie_content = pygame.transform.scale(self.charlie_content, (config.SCREEN_WIDTH //5, config.SCREEN_HEIGHT //1.1))
         self.charlie_content_gray = grayscale(self.charlie_content)
-        self.PNJ = pygame.image.load("imgs/characters/portier.png").convert_alpha()
+        self.PNJ = pygame.image.load("imgs/characters/trois.png").convert_alpha()
         self.PNJ = pygame.transform.flip(self.PNJ, True, False)
         self.PNJ = pygame.transform.scale(self.PNJ, (config.SCREEN_WIDTH//5, config.SCREEN_HEIGHT//1.1))
         self.PNJ_gray = grayscale(self.PNJ)
