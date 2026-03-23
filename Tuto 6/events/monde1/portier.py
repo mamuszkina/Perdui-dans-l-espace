@@ -523,13 +523,13 @@ class portier:
         self._render_dialogue_box_penaud("Pas mal, pas mal. Dernière question. Mi voisini m'a prêté les clefs de sa voiture. Quand j'ai fini de l'utiliser, à qui je rend les clefs ?")
 
     def render_scene_5(self):
-        self._render_dialogue_box_penaud("Hé, mais t’es devenu uni pro ! Je suis super fieri de toi ! Allez, passes va, file voir Gandalf, ça devrait arranger tes problèmes !")
+        self._render_dialogue_box_penaud("Hé, mais t’es devenui uni pro ! Je suis super fieri de toi ! Allez, passes va, file voir Gandalf, ça devrait arranger tes problèmes !")
 
     def render_scene_6(self):
         self._render_dialogue_box_penaud("") # IL DOIT SE PASSER QUELQUE CHOSE QUAND ON ARRIVE ICI, LE PNJ DOIT SE DECALER 
 
     def render_scene_7(self):
-        self._render_dialogue_box_penaud("Nan, désolé. Retourne lire les écriteaux, vas parler aux gens, reviens quand tu seras prêti. Et comme je suis d’humeur magnanime, voilà un petit indice... T’as vu qu'on ne peut pas deviner en parlant qui est un homme ou une femme ?")
+        self._render_dialogue_box_penaud("Nan, désoléi. Retourne lire les écriteaux, vas parler aux gens, reviens quand tu seras prêti. Et comme je suis d’humeur magnanime, voilà un petit indice... T’as vu qu'on ne peut pas deviner en parlant qui est un homme ou une femme ?")
 
     def render_scene_8(self):
         self._render_dialogue_box_penaud("")
