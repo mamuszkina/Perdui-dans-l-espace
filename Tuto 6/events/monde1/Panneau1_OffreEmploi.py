@@ -11,10 +11,14 @@ class Panneau1_OffreEmploi:
         self.player = player
         self.dialog = pygame.image.load("imgs/monde5/dessin.png").convert_alpha()
         self.dialog = pygame.transform.scale(self.dialog, (config.SCREEN_WIDTH//2, config.SCREEN_HEIGHT//2))
+        self.charlie = pygame.image.load("imgs/characters/C_surpris.png").convert_alpha()
+        self.charlie = pygame.transform.scale(self.charlie, (config.SCREEN_WIDTH //5, config.SCREEN_HEIGHT //1.1))
+        self.dialog_charlie = pygame.image.load("imgs/dialog.png").convert_alpha()
+        self.dialog_charlie = pygame.transform.scale(self.dialog_charlie, (config.SCREEN_WIDTH//3.5, config.SCREEN_HEIGHT//4.5))
 
 #NE PAS OUBLIER DE CHANGER LE NOMBRE DE MAX CUTS
         self.cut = 0
-        self.max_cut = 0
+        self.max_cut = 1
 
         # Typewriter state when creating the PNJ
         self.char_delay_ms = 30                       # 1= très rapide ; 100= très lent
@@ -57,6 +61,8 @@ class Panneau1_OffreEmploi:
     def render(self):
         if self.cut == 0:
             self.render_scene_0()
+        elif self.cut == 1:
+            self.render_scene_1()
 
     @staticmethod   # to avoid that the following function reads self automatically
     def wrap_text(text, font, max_width):
@@ -95,6 +101,34 @@ class Panneau1_OffreEmploi:
         wrapped = self.wrap_text(text, font, max_width)
         return font, wrapped
 
+    def _render_dialogue_box_static(self, text):
+        dialogue_rect = self.screen.blit(
+            self.dialog,
+            (config.SCREEN_WIDTH // 4, config.SCREEN_HEIGHT // 4)
+        )
+
+        color = config.BLACK
+
+        max_width = dialogue_rect.width - dialogue_rect.width // 4
+        max_height = dialogue_rect.height - dialogue_rect.height // 2
+
+        font, wrapped = self.get_fitting_font(
+            text=text,
+            font_path="fonts/panneau.ttf",
+            max_width=max_width,
+            max_height=max_height,
+            start_size=30,
+            min_size=12
+        )
+
+        y = dialogue_rect.y + 120
+
+        for line in wrapped:
+            surf = font.render(line, True, color)
+            x_offset = config.SCREEN_WIDTH // 13
+            self.screen.blit(surf, (dialogue_rect.x + x_offset, y))
+            y += font.get_height() + 6
+
     # create a function for dialogue box
     def _render_dialogue_box(self, text):
         dialogue_rect = self.screen.blit(self.dialog, (config.SCREEN_WIDTH // 4, config.SCREEN_HEIGHT // 4))      # chiffres = position bulle de dialogue
@@ -126,7 +160,44 @@ class Panneau1_OffreEmploi:
             self.screen.blit(surf, (dialogue_rect.x + x_offset, y))
             chars_left -= len(line) + 1
             y += font.get_height() + 6 
+
+    def _render_dialogue_box_Answer(self, text):
+        dialogue_rect = self.screen.blit(self.dialog_charlie, (config.SCREEN_WIDTH // 2.8, config.SCREEN_HEIGHT // 1.4))      # chiffres = position bulle de dialogue
+        self.screen.blit(self.charlie, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
+
+        font = pygame.font.Font("fonts/PokemonGb.ttf", 20)           #20 = taille des lettres
+        color = config.BLACK
+
+        max_width = dialogue_rect.width - 60
+        max_height = dialogue_rect.height - 60
+
+        font, wrapped = self.get_fitting_font(
+            text=text,
+            font_path="fonts/PokemonGb.ttf",
+            max_width=max_width,
+            max_height=max_height,
+            start_size=20,
+            min_size=12
+        )
+
+        self.current_dialogue_total_chars = sum(len(line) + 1 for line in wrapped)
+
+        chars_left = self.current_char
+        y = dialogue_rect.y + 40
+
+        for line in wrapped:
+            if chars_left <= 0:
+                break
+            visible = line[:chars_left]
+            surf = font.render(visible, True, color)
+            self.screen.blit(surf, (dialogue_rect.x + 30, y))         # chiffre, y = décalage début de bulle
+            chars_left -= len(line) + 1
+            y += font.get_height() + 6 
     
     def render_scene_0(self):
         self._render_dialogue_box("OFFRE A POURVOIR ! CHEFFI DE SALON DE COIFFURE RECRUTE UNI COIFFEUSI")
         self.game.unlock_pokedex_entry(1, "Panneau1")
+
+    def render_scene_1(self):
+        self._render_dialogue_box_static("OFFRE A POURVOIR ! CHEFFI DE SALON DE COIFFURE RECRUTE UNI COIFFEUSI")
+        self._render_dialogue_box_Answer("Cheffi ? Uni coiffeusi ? Mais qui a écrit ça ?! Je me demande s'il y a d'autres bizareries sur les panneaux...")

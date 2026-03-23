@@ -465,5 +465,5 @@ class PNJ5:
         self.screen.blit(self.charlie_penaud, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
 
     def render_scene_8(self):
-        self._render_dialogue_box_Answer("Elle parle super bizarrement cette dame, mais qu’est-ce qu’il se passe ici...")
+        self._render_dialogue_box_Answer("Elle parle super bizarrement cette enfant, mais qu’est-ce qu’il se passe ici... Je ferais mieux de noter tous les mots étranges dans mon carnet.")
         self.screen.blit(self.charlie_penaud, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))

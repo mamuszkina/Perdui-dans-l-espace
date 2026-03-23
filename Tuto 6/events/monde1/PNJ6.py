@@ -193,5 +193,5 @@ class PNJ6:
         self.game.unlock_pokedex_entry(1, "PNJ6")
 
     def render_scene_2(self):
-        self._render_dialogue_box_Answer("Ce bruit et cette lumière ont dû complètement le bouleverser, le pauvre...")
+        self._render_dialogue_box_Answer("Ce bruit et cette lumière ont dû complètement le bouleverser, le pauvre... Je ferais mieux d'aller voir si quelqu'un a vu cet étrange éclair et ce bruit.")
         self.screen.blit(self.charlie_mécontent, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))

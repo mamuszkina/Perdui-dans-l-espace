@@ -416,7 +416,7 @@ class portier:
 
 
     def render_goodbye(self):
-        self._render_dialogue_box_penaud("Hé, ici on est sérieusi à la Scène Errès ! Donc soit vous apprenez à bien parler, soit vous restez dehors !") 
+        self._render_dialogue_box_penaud("Mais moi je peux pas faire rentrer n'importe qui ! Revenez me voir en me disant à qui vous voulez parler. Je crois qu'on peut trouver des noms sur les panneaux d'affichage...") 
 
     def handle_choice(self):
         choices = self.choices[self.choice_index]

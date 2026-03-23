@@ -376,11 +376,11 @@ class PNJ4:
             self.last_update = pygame.time.get_ticks()
         
     def render_scene_0(self):
-        self._render_dialogue_box("Charlie ! Ça fait toujours plaisir quand tu viens prendre le temps de papoter !")
+        self._render_dialogue_box("Charlie ! Ça fait toujours plaisir quand tu viens prendre le temps de papoter ! Tu as lu ce qu'il y a écrit sur le panneau à côté de moi ? C'est étrange !")
         self.screen.blit(self.charlie_gray, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
 
     def render_scene_1(self):
-        self._render_dialogue_box("Comment vont tes niècis ? Ça fait longtemps qu’on les a pas vuis !")
+        self._render_dialogue_box("Et sinon, comment vont tes niècis ? Ça fait longtemps qu’on les a pas vuis !")
         self.screen.blit(self.charlie_gray, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
 
     def render_scene_2(self):
