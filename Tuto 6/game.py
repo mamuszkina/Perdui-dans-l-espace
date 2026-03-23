@@ -70,7 +70,7 @@ class Game:
         self.PNJ10_dialogue_done = False
         self.Maison_papier_dialogue_done = False
         self.Fantome_du_lac_dialogue_done = False
-        self.Clef = True
+        self.Clef = False
         self.tp_monde3 = False
         #MONDE TROIS
         self.portier3_1_dialogue_done = False
