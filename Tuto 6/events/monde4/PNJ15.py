@@ -26,12 +26,12 @@ class PNJ15:
         self.PNJ = pygame.transform.flip(self.PNJ, True, False)
         self.PNJ = pygame.transform.scale(self.PNJ, (config.SCREEN_WIDTH//5, config.SCREEN_HEIGHT//1.1))
         self.PNJ2 = pygame.image.load("imgs/characters/enfant_un.png").convert_alpha()
-        self.PNJ2 = pygame.transform.flip(self.PNJ, True, False)
-        self.PNJ2 = pygame.transform.scale(self.PNJ, (config.SCREEN_WIDTH//5, config.SCREEN_HEIGHT//1.1))
+        self.PNJ2 = pygame.transform.flip(self.PNJ2, True, False)
+        self.PNJ2 = pygame.transform.scale(self.PNJ2, (config.SCREEN_WIDTH//5, config.SCREEN_HEIGHT//1.1))
         self.PNJ3 = pygame.image.load("imgs/characters/quatre.png").convert_alpha()
-        self.PNJ3 = pygame.transform.flip(self.PNJ, True, False)
-        self.PNJ3 = pygame.transform.scale(self.PNJ, (config.SCREEN_WIDTH//5, config.SCREEN_HEIGHT//1.1))
-        self.PNJ_gray = grayscale(self.PNJ)
+        self.PNJ3 = pygame.transform.flip(self.PNJ3, True, False)
+        self.PNJ3 = pygame.transform.scale(self.PNJ3, (config.SCREEN_WIDTH//5, config.SCREEN_HEIGHT//1.1))
+        self.PNJ_gray = grayscale(self.PNJ3)
 
         self.cut = 0
         self.max_cut = 3

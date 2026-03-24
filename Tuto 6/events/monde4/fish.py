@@ -183,7 +183,7 @@ class fish:
         self._render_dialogue_box("'J’y pensais, pour t’aider, je t’envoie un poisson-traducteur, il traduira tout dans ta langue, tu n'as qu'à l'insérer dans ton oreille.")
         
     def render_scene_2(self):
-        self._render_dialogue_box("C’est pas un traucteur parfait, mais ça devrait aider, au cas où si tu n’es pas arrivé chez ta langue natale. Même si je suis sûr que c’est ta langue ! Gandalf.'")
+        self._render_dialogue_box("C’est pas un traducteur parfait, mais ça devrait aider, au cas où si tu n’es pas arrivé chez ta langue natale. Même si je suis sûr que c’est ta langue ! Gandalf.'")
 
     def render_scene_3(self):
         self._render_dialogue_box_Answer ("Quoi ? Un poisson dans une oreille ? Mais c’est dégueulasse ! Bon, si ça peut m’aider... Berk ! On dirait qu’il me bave dans l’oreille ! J’espère que ça marche au moins !")
