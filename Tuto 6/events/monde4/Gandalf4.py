@@ -456,7 +456,7 @@ class Gandalf4:
         self._render_dialogue_box("")
 
     def render_scene_5(self):
-        self._render_dialogue_box("Comment ça ? Mais enfin au pire c'est pas si grave si tu n'es pas chez toi non ? J'ai pas tout résolu vec ton poisson-traduction ?")
+        self._render_dialogue_box("Comment ça ? Mais enfin au pire c'est pas si grave si tu n'es pas chez toi non ? J'ai pas tout résolu avec ton poisson-traduction ?")
         self.screen.blit(self.charlie_gray, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
 
     def render_scene_6(self):
