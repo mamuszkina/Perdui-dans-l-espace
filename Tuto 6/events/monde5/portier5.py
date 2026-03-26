@@ -480,7 +480,7 @@ class portier5:
         self.screen.blit(self.charlie_content, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
 
     def render_scene_17(self):
-        self._render_dialogue_box_Gandalf("Mais non c'est pas facile ! Je les connais pas les règles de grammaire ! J'interagis avec le subsconscient des gens je te rappelle ! ça a pas de règles le subconscient ! Je sais juste si les prases sont correctes ou pas !")
+        self._render_dialogue_box_Gandalf("Mais non c'est pas facile ! Je les connais pas les règles de grammaire ! J'interagis avec le subsconscient des gens je te rappelle ! ça a pas de règles le subconscient ! Je sais juste si les phrases sont correctes ou pas !")
         self.screen.blit(self.charlie_content_gray, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
 
     def render_scene_18(self):
