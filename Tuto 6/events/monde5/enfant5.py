@@ -406,6 +406,7 @@ class enfant5:
     def _render_dialogue_box_Gandalf(self, text):
         dialogue_rect = self.screen.blit(self.dialogPNJ, (config.SCREEN_WIDTH // 2.8, config.SCREEN_HEIGHT // 1.4))      # chiffres = position bulle de dialogue
         self.screen.blit(self.charlie_gray, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
+        self.screen.blit(self.gandalf, (config.SCREEN_WIDTH // 6, config.SCREEN_HEIGHT * 0.5))
 
         font = pygame.font.Font("fonts/PokemonGb.ttf", 20)           #20 = taille des lettres
         color = config.BLACK
@@ -574,10 +575,7 @@ class enfant5:
         self.screen.blit(self.panneau, (config.SCREEN_WIDTH // 6, config.SCREEN_HEIGHT // 10))
         dialogue_rect = self.screen.blit(self.dialog, (config.SCREEN_WIDTH // 2.8, config.SCREEN_HEIGHT // 1.4))
         self.screen.blit(self.charlie, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
-        self.screen.blit(self.gandalf_gray, (config.SCREEN_WIDTH // 6, config.SCREEN_HEIGHT * 0.5))
-
-        if self.game.homme_finito == True :
-            self.screen.blit(self.panneau, (50, 10))
+        self.screen.blit(self.PNJ_gray, (config.SCREEN_WIDTH // 6, config.SCREEN_HEIGHT * 0.5))
 
         font = pygame.font.Font("fonts/PokemonGb.ttf", 20)
         color = config.BLACK
@@ -774,7 +772,7 @@ class enfant5:
         self._render_dialogue_box_Answer("")
 
     def render_scene_15(self):
-        self._render_dialogue_box_Answer("Oui, c'est ça ! C'est logique en fait.  C’est un groupe qui rassemble toutes les personnes. Tous les humains quoi. Les oncles et tantes, les frères et sœurs, les hommes et les femmes...")
+        self._render_dialogue_box_Answer("Oui, c'est ça ! C'est logique en fait.  C’est un groupe qui rassemble toutes les personnes. Tous les humains quoi. Les oncles et tantes, les frères et soeurs, les hommes et les femmes...")
         self.screen.blit(self.charlie_content, (config.SCREEN_WIDTH // 1.6, config.SCREEN_HEIGHT * 0.5))
         self.ù = True
 
