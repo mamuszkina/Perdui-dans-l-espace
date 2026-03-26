@@ -1166,7 +1166,7 @@ MAP_CONFIG = {
             },
             {
             "name" : "portier6",            
-            "image" : "prof4",
+            "image" : "portier",
             "start_position" : [23,19]
             },
             {
