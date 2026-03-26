@@ -880,7 +880,7 @@ class Gandalf6:
         self._render_dialogue_box_fin ("Aussi étonnant que cela puisse paraître, Charlie a fini par rentrer chez lui. Il a filé dans son appart, a pris une bonne douche, dormi 15 heures d'affilée. Quand il a parlé de cette histoire à son entourage, personne n'a voulu le croire. Mais il a fini par avoir son éclair au chocolat et ses croissants. Tout est bien qui finit bien pour lui.")
 
     def render_scene_49(self):
-        self.game.fin_de_jeu = True
+        self.game.game_closed = True
         
         
         
