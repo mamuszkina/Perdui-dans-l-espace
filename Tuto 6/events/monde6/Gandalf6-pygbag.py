@@ -91,6 +91,14 @@ class Gandalf6:
 
   
     def update(self):  
+        # Écran de fin : une fois arrivé à la dernière scène, on y reste.
+        # On vide les touches pour que Entrée ne fasse plus avancer la scène
+        # (sinon cut dépasse max_cut, l'événement se ferme et on revient sur la carte).
+        if self.cut >= self.max_cut:
+            self.cut = self.max_cut
+            pygame.event.clear(pygame.KEYDOWN)
+            return
+
         if self.cut == 18:
             self.cut = 16
         elif self.cut == 20:
@@ -880,7 +888,30 @@ class Gandalf6:
         self._render_dialogue_box_fin ("Aussi étonnant que cela puisse paraître, Charlie a fini par rentrer chez lui. Il a filé dans son appart, a pris une bonne douche, dormi 15 heures d'affilée. Quand il a parlé de cette histoire à son entourage, personne n'a voulu le croire. Mais il a fini par avoir son éclair au chocolat et ses croissants. Tout est bien qui finit bien pour lui.")
 
     def render_scene_49(self):
-        self.game.game_closed = True
+        # Écran de fin affiché par l'événement lui-même (même chemin que les
+        # dialogues, qui fonctionne dans le navigateur).
+        if not getattr(self, "fin_music_stopped", False):
+            try:
+                pygame.mixer.music.stop()
+            except pygame.error:
+                pass
+            self.fin_music_stopped = True
+
+        self.screen.blit(self.fin, (0, 0))
+
+        cx = int(config.SCREEN_WIDTH * 0.70)       # zone sombre à droite de la Terre
+        y = int(config.SCREEN_HEIGHT * 0.22)
+        for texte, taille, couleur in (
+            ("FIN", 72, config.YELLOW),
+            ("Merci d'avoir joué !", 28, config.WHITE),
+            ("", 20, config.WHITE),
+            ("Tu peux fermer cet onglet.", 20, config.WHITE),
+        ):
+            if texte:
+                font = pygame.font.Font("fonts/PokemonGb.ttf", taille)
+                surf = font.render(texte, True, couleur)
+                self.screen.blit(surf, surf.get_rect(center=(cx, y)))
+            y += taille + 36
         
         
         

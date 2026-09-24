@@ -332,7 +332,7 @@ class bibliothèque:
         if choices == "A grammar of sabane, A Nambikwaran Language":
             self.choice_active = False
             self.cut = 2
-            webbrowser.open("https://130.60.24.118/gramfinder/p/south_america/dearaujo_sabane2004v2_o.pdf")
+            webbrowser.open("https://github.com/mamuszkina/Perdui-dans-l-espace/blob/main/docs/assets/GrammarofSabane_Araujo_2004.pdf")
             pass
             self.current_char = 0
             self.last_update = pygame.time.get_ticks()
