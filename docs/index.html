@@ -1,489 +1,450 @@
-<html lang="en-us"><script src="https://pygame-web.github.io/archives/0.9/pythons.js" type=module id=site data-LINES=57 data-CONSOLE=25 data-python=python3.12 data-os=vtx,fs,snd,gui async defer>#<!--
-
-print("""
-Loading tuto.6 from tuto.6.apk
-    Pygbag Version : 0.9.2
-    Template Version : 0.9.0
-    Python  : 3.12
-    CDN URL : https://pygame-web.github.io/archives/0.9/
-    Screen  : 1280x720
-    Title   : tuto.6
-    Folder  : tuto.6
-    Authors : pgw
-    SPDX-License-Identifier: cookiecutter.spdx
-
-""")
-
-
-# screen pixels (real, hardware)
-WIDTH=1024  # 1280
-HEIGHT=600  # 720
-
-# reference/idealized screen pixels
-REFX = 1980
-REFY = 1080
-
-def u(real, ref, v):
-    if abs(v)<0.9999999:
-        result = int( (float(real)/100.0) * (v*1000))
-        if v<0:
-            return real-result
-        return result
-    return int( (real/ref) * v )
-
-def ux(*argv):
-    global WIDTH, REFX
-    acc = 0
-    for v in argv:
-        acc += u(WIDTH, REFX, v)
-    return acc
-
-def uy(*argv):
-    global HEIGHT, REFY
-    acc = 0
-    for v in argv:
-        acc += u(HEIGHT, REFY, v)
-    return acc
-
-
-
-
-# do not rename
-async def custom_site():
-
-    import sys
-    import asyncio
-    import platform
-    import json
-    from pathlib import Path
-
-
-
-    import embed
-
-
-    platform.document.body.style.background = "#7f7f7f"
-
-    import pygame
-
-    def compose():
-        pygame.display.update()
-        window.chromakey(None, *screen.get_colorkey(), 40)
-
-    pygame.init()
-    pygame.font.init()
-
-    screen = pygame.display.set_mode([ux(.100),uy(.100)], pygame.SRCALPHA, 32)
-    screen.set_colorkey( (0,0,0,0), pygame.RLEACCEL )
-    screen.fill( (0,0,0,0) )
-
-    compose()
-
-    platform.window.transfer.hidden = true
-    platform.window.canvas.style.visibility = "visible"
-
-
-
-    apk = "tuto.6.apk"
-
-    bundle = "tuto.6"
-
-    # the C or js loader could do that but be explicit.
-    appdir = Path(f"/data/data/{bundle}") # /data/data/tuto.6
-    appdir.mkdir()
-
-
-    # mount apk
-
-    cfg = {
-        "io": "url",
-        "type":"mount",
-        "mount" : {
-            "point" : appdir.as_posix(),
-            "path" : "/",
-        },
-        "path" : f"/ => {appdir.as_posix()}",
-    }
-
-
-    track = platform.window.MM.prepare(apk, json.dumps(cfg))
-
-    marginx = ux(.020) # 20%
-    marginy = uy(.045) # 45%
-
-
-    def pg_bar(pos):
-        nonlocal marginx, marginy
-        # resolution of progress bar, recalculate since it may not be know yet.
-        total = track.len or 10  # avoid div0
-        slot = ux(.060)/ total # 60%
-
-        pygame.draw.rect(screen,(10,10,10),( marginx-ux(10), marginy-uy(10), (total*slot)+ux(20), uy(110) ) )
-        pygame.draw.rect(screen,(0,255,0), ( marginx, marginy, track.pos*slot, uy(90)) )
-
-    # wait until zip mount + overlayfs is complete
-    while not track.ready:
-        pg_bar(track.pos)
-        compose()
-        await asyncio.sleep(.1)
-
-    # fill it up in case it was cached and instant download
-    pg_bar(track.len)
-    compose()
-
-
-    # preloader will change dir and prepend it to sys.path
-    platform.run_main(PyConfig, loaderhome= appdir / "assets", loadermain=None)
-
-
-    # wait preloading complete
-    # that includes images and wasm compilation of bundled modules
-    while embed.counter()<0:
-        await asyncio.sleep(.1)
-
-    main = appdir / "assets" / "main.py"
-
-    # start async top level machinery and add a console.
-    await TopLevel_async_handler.start_toplevel(platform.shell, console=window.python.config.debug)
-
-    # now that apk is mounted we have access to font cache
-    # but we need to fill __file__ that is not yet set
-    __import__(__name__).__file__ = str(main)
-
-
-    # now make a prompt
-    fnt = pygame.sysfont.SysFont("freesans",  uy(80) )
-
-    def ui_callback(pkg, error=None):
-        nonlocal fnt
-        if error:
-            prompt = fnt.render(f"{error}", True, "black")
-        else:
-            prompt = fnt.render(f"Setting [{pkg}] up", True, "black")
-        pg_bar(track.len)
-        screen.blit(prompt, ( marginx+ ux(80), marginy - uy(10) ) )
-        compose()
-
-    # test/wait if user media interaction required
-    if not platform.window.MM.UME:
-
-        # now make a prompt
-        fnt = pygame.sysfont.SysFont("freesans",  uy(80) )
-        prompt = fnt.render("Ready to start !", True, "blue")
-        pg_bar(track.len)
-        screen.blit(prompt, ( marginx+ ux(80), marginy - uy(10) ) )
-        compose()
-        print("""
-        * Waiting for media user engagement : please click/touch page *
-    """)
-        while not platform.window.MM.UME:
-            await asyncio.sleep(.1)
-
-    # cleanup
-    screen.fill( (0,0,0,0) )
-    pygame.display.flip()
-
-    await shell.runpy(main, callback=ui_callback)
-
-
-
-import asyncio
-
-asyncio.run( custom_site() )
-
-
-
-
-
-
-
-
-
-
-
-
-# BEGIN BLOCK
-#
-# now this is the html part you can (and should) customize
-# It is not mandatory : pygame-script when it reads the first line (also called
-# shebang ) of above code create absolute minimal widget set
-# required for running with default rules
-#
-# do not alter that comment block it is separating python code from html code
-# =============================================================================
-# --></script><head><!--
-//=============================================================================
-//
-//
-//
-//
-//
-//
-//
-
-    {%- if cookiecutter.comment != "" -%}
-{{cookiecutter.comment}}
-    {% endif %}
-
---><script type="application/javascript">
-// END BLOCK
-
-
-
-// this dict is available under PyConfig.config from __main__
-
-config = {
-    xtermjs : "1" ,
-    _sdl2 : "canvas",
-    user_canvas : 0,
-    user_canvas_managed : 0,
-    ume_block : 1,
-    can_close : 0,
-    archive : "tuto.6",
-    gui_debug : 3,
-    cdn : "https://pygame-web.github.io/archives/0.9/",
-    autorun : 0,
-    PYBUILD : "3.12"
-}
-
-</script>
-
-    <title>tuto.6</title>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="viewport" content="height=device-height, initial-scale=1.0">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
-
-    <link rel="prefetch" href="https://pygame-web.github.io/archives/0.9/pythonrc.py">
-    <link rel="prefetch" href="https://pygame-web.github.io/archives/0.9/vt/xterm.js">
-    <link rel="prefetch" href="https://pygame-web.github.io/archives/0.9/vt/xterm-addon-image.js">
-    <link rel="prefetch" href="https://pygame-web.github.io/archives/0.9/vt/xterm-addon-image.js">
-
-
-    <link rel="icon" type="image/png" href="favicon.png" sizes="16x16">
-
-    <style>
-        #status {
-            display: inline-block;
-            vertical-align: top;
-            margin-top: 20px;
-            margin-left: 30px;
-            font-weight: bold;
-            color: rgb(120, 120, 120);
-        }
-
-        #progress {
-            height: 20px;
-            width: 300px;
-        }
-
-        div.emscripten { text-align: center; }
-        div.emscripten_border { border: 1px solid black; }
-        div.thick_border { border: 4px solid black; }
-
-        /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
-        /* average size of droid screen 470dp x 320dp  */
-        canvas.emscripten {
-            border: 0px none;
-            background-color: transparent;
-            width: 100%;
-            height: 100%;
-            z-index: 5;
-
-            padding: 0;
-            margin: 0 auto;
-
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-        }
-
-        body {
-            font-family: arial;
-            margin: 0;
-            padding: none;
-            background-color:powderblue;
-        }
-
-        .topright{
-           position:absolute;
-           top:0px;
-           right:0px;
-        }
-
-        .bottomright {
-            position:absolute;
-            top: 40%;
-            right: 0px;
-        }
-
-        .center {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .trinfo{
-           position:relative;
-           right:0px;
-           border: 1px solid black;
-        }
-
-        .framed{
-           position:relative;
-           top:150px;
-           right:10px;
-           border: 1px solid black;
-        }
-    </style>
-
-    <script src="https://pygame-web.github.io/archives/0.9//browserfs.min.js"></script>
-
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perdüe dans l'espace – un jeu pour explorer les langues</title>
+<meta name="description" content="Un jeu vidéo gratuit, style rétro, pour découvrir des façons de parler français sans genrer les personnes et la manière dont les langues du monde classent les mots. Projet de recherche ANR EVOGRAM.">
+
+<!-- Aperçu lors du partage (réseaux sociaux, messageries, mails) -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:title" content="Perdüe dans l'espace">
+<meta property="og:description" content="Charlie est perdu dans des univers parallèles où l'on parle français… autrement. Un jeu gratuit dans le navigateur, issu du projet de recherche ANR EVOGRAM.">
+<meta property="og:url" content="https://mamuszkina.github.io/Perdui-dans-l-espace/">
+<meta property="og:image" content="https://mamuszkina.github.io/Perdui-dans-l-espace/assets/partage.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Écran titre du jeu : une dizaine de personnages dessinés sur un ciel étoilé.">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="favicon.png">
+<meta name="theme-color" content="#2f6464">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Press+Start+2P&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --space: #2f6464;        /* teal du ciel de l'écran titre */
+    --space-deep: #1b3b3d;
+    --space-ink: #0f2324;
+    --lime: #cde889;         /* vert-jaune des boutons du menu */
+    --lime-deep: #a9cf55;
+    --paper: #f5f7ee;
+    --ink: #13201f;
+    --muted: #4c5f5d;
+    --line: #d5ddcc;
+    --pixel: "Press Start 2P", ui-monospace, monospace;
+    --text: "Atkinson Hyperlegible", system-ui, sans-serif;
+    --r: 14px;
+    --max: 1080px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; font-family: var(--text); font-size: 18px; line-height: 1.6;
+    color: var(--ink); background: var(--paper);
+  }
+  img { max-width: 100%; height: auto; display: block; }
+  a { color: inherit; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+  .pixel { font-family: var(--pixel); letter-spacing: .02em; line-height: 1.5; }
+  :focus-visible { outline: 3px solid var(--lime-deep); outline-offset: 3px; }
+
+  /* ---------- Bandeau étoilé ---------- */
+  .stars {
+    background-color: var(--space);
+    background-image:
+      radial-gradient(1.5px 1.5px at 20px 30px, #e8f4ff 99%, transparent),
+      radial-gradient(1px 1px at 90px 80px, #cfe3ff 99%, transparent),
+      radial-gradient(1.5px 1.5px at 150px 20px, #ffffff 99%, transparent),
+      radial-gradient(1px 1px at 60px 140px, #d8ecff 99%, transparent),
+      radial-gradient(1px 1px at 180px 120px, #ffffff 99%, transparent);
+    background-size: 200px 170px;
+    color: #fff;
+  }
+
+  /* ---------- En-tête ---------- */
+  header.top { padding: 14px 0; }
+  header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .brand { font-family: var(--pixel); font-size: 12px; text-decoration: none; color: var(--lime); }
+  nav.links { display: flex; gap: 18px; font-size: 15px; }
+  nav.links a { text-decoration: none; opacity: .9; }
+  nav.links a:hover { opacity: 1; text-decoration: underline; }
+
+  /* ---------- Héros ---------- */
+  .hero { padding: 8px 0 64px; }
+  .hero-img {
+    border-radius: var(--r); overflow: hidden;
+    box-shadow: 0 0 0 4px var(--space-ink), 0 18px 40px rgba(0,0,0,.35);
+  }
+  .hero-body { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; align-items: end; margin-top: 36px; }
+  .hero h1 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .tagline { font-size: clamp(22px, 3vw, 30px); line-height: 1.35; margin: 0 0 12px; font-weight: 700; }
+  .hero p.lead { margin: 0; font-size: 19px; opacity: .92; }
+
+  .cta { display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+    font-family: var(--pixel); font-size: 14px; text-decoration: none; text-align: center;
+    padding: 18px 22px; border-radius: 6px;
+    background: var(--lime); color: var(--space-ink);
+    border: 4px solid var(--space-ink); box-shadow: 0 6px 0 var(--space-ink);
+    transition: transform .08s, box-shadow .08s;
+  }
+  .btn:hover { background: #d9f19c; }
+  .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--space-ink); }
+  .btn .arrow { font-size: 12px; }
+  .btn-ghost {
+    font-family: var(--text); font-size: 16px; padding: 10px 14px; text-align: center;
+    border: 2px solid rgba(255,255,255,.5); border-radius: 6px; text-decoration: none;
+  }
+  .btn-ghost:hover { border-color: #fff; }
+  .facts { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 0; padding: 0; list-style: none; justify-content: center; }
+  .facts li { font-size: 14px; background: rgba(0,0,0,.22); padding: 4px 10px; border-radius: 99px; }
+  .touch-note {
+    display: none; font-size: 15px; background: rgba(0,0,0,.28); border-left: 4px solid var(--lime);
+    padding: 10px 12px; border-radius: 6px;
+  }
+  @media (pointer: coarse) { .touch-note { display: block; } }
+
+  /* ---------- Sections ---------- */
+  section.block { padding: 72px 0; }
+  .kicker { font-family: var(--pixel); font-size: 11px; color: var(--space); text-transform: uppercase; margin: 0 0 14px; }
+  h2 { font-size: clamp(26px, 3.4vw, 36px); line-height: 1.2; margin: 0 0 18px; }
+  h3 { font-size: 20px; margin: 0 0 6px; line-height: 1.3; }
+  .prose { max-width: 680px; }
+  .prose p { margin: 0 0 14px; }
+
+  /* Histoire */
+  .story { display: grid; grid-template-columns: 1fr 1.1fr; gap: 48px; align-items: center; }
+  .shot { border-radius: var(--r); overflow: hidden; border: 3px solid var(--space-ink); background: #000; }
+  .cast { display: flex; gap: 20px; margin-top: 22px; }
+  .who { display: flex; align-items: center; gap: 12px; }
+  .who img { width: 56px; height: 72px; object-fit: cover; object-position: top; border-radius: 10px; background: #dfe9dd; border: 2px solid var(--line); }
+  .who b { display: block; line-height: 1.2; }
+  .who span { font-size: 14px; color: var(--muted); }
+
+  /* Mondes */
+  .worlds-bg { background: #eaf0e1; }
+  .part-title { display: flex; align-items: baseline; gap: 14px; margin: 44px 0 16px; }
+  .part-title:first-of-type { margin-top: 28px; }
+  .part-title .pixel { font-size: 11px; background: var(--space); color: var(--lime); padding: 6px 10px; border-radius: 4px; white-space: nowrap; }
+  .part-title h3 { font-size: 21px; margin: 0; }
+  .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .world {
+    background: #fff; border: 2px solid var(--line); border-radius: var(--r);
+    padding: 20px 20px 18px; display: flex; flex-direction: column;
+  }
+  .world .num { font-family: var(--pixel); font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+  .world p { margin: 0 0 12px; font-size: 16px; color: #2c3a39; }
+  .say {
+    margin-top: auto; font-family: var(--pixel); font-size: 10.5px; line-height: 1.9;
+    background: var(--space-ink); color: var(--lime); padding: 12px 14px; border-radius: 8px;
+  }
+  .say::before { content: "» "; opacity: .7; }
+
+  /* Galerie */
+  .gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 26px; }
+  .gallery figure { margin: 0; }
+  .gallery figcaption { font-size: 15px; color: var(--muted); margin-top: 8px; }
+
+  /* Comment jouer */
+  .howto { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .keys { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .keys li {
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+    background: var(--lime); border: 3px solid var(--space-ink); border-radius: 6px; padding: 10px 14px;
+    font-family: var(--pixel); font-size: 11px;
+  }
+  kbd {
+    font-family: var(--pixel); font-size: 11px; background: #fff; border: 2px solid var(--space-ink);
+    border-bottom-width: 4px; border-radius: 5px; padding: 4px 8px; white-space: nowrap;
+  }
+  .checklist { padding-left: 1.1em; margin: 0; }
+  .checklist li { margin-bottom: 8px; }
+
+  /* Enseignant·es */
+  .teach { background: var(--space-deep); color: #eef4ef; border-radius: 20px; padding: 44px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; }
+  .teach .kicker { color: var(--lime); }
+  .teach ul { margin: 0; padding-left: 1.1em; }
+  .teach li { margin-bottom: 8px; }
+  .teach a.inline { color: var(--lime); }
+
+  /* Projet */
+  .project { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; }
+  .credits { align-self: start; background: #fff; border: 2px solid var(--line); border-radius: var(--r); padding: 22px; font-size: 16px; }
+  .credits dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; }
+  .credits dt { font-weight: 700; }
+  .credits dd { margin: 0; }
+  .funders { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .funders span { font-family: var(--pixel); font-size: 10px; border: 2px solid var(--ink); padding: 6px 10px; border-radius: 4px; }
+
+  .bd {
+    margin-top: 28px; background: #fff; border: 2px solid var(--line); border-left: 6px solid var(--lime-deep);
+    border-radius: var(--r); padding: 22px 22px 20px;
+  }
+  .bd-kicker { font-size: 10px; color: var(--space); text-transform: uppercase; margin: 0 0 10px; }
+  .bd h3 { margin-bottom: 8px; }
+  .bd p { font-size: 16px; }
+  .bd-credits { color: var(--muted); font-size: 14px !important; }
+  .bd-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+  .bd-btn {
+    display: inline-block; text-decoration: none; font-weight: 700; font-size: 16px;
+    padding: 9px 14px; border-radius: 6px; background: var(--space); color: #fff; border: 2px solid var(--space);
+  }
+  .bd-btn:hover { background: var(--space-deep); border-color: var(--space-deep); }
+  .bd-btn-alt { background: transparent; color: var(--space); }
+  .bd-btn-alt:hover { background: #eaf0e1; color: var(--space-deep); }
+
+  footer { padding: 40px 0 48px; font-size: 15px; }
+  footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  footer a { color: var(--lime); }
+  .final-cta { text-align: center; padding: 64px 0 24px; }
+  .final-cta p { margin: 0 0 22px; font-size: 20px; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 900px) {
+    .hero-body, .story, .howto, .teach, .project { grid-template-columns: 1fr; gap: 28px; }
+    .grid3 { grid-template-columns: 1fr 1fr; }
+    .teach { padding: 28px 22px; }
+  }
+  @media (max-width: 600px) {
+    body { font-size: 17px; }
+    .wrap { padding: 0 16px; }
+    nav.links { display: none; }
+    .grid3, .gallery { grid-template-columns: 1fr; }
+    section.block { padding: 52px 0; }
+    .btn { font-size: 12px; }
+    .part-title { flex-direction: column; gap: 8px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .btn { transition: none; } }
+</style>
 </head>
-
 <body>
 
-    <div id="transfer" align=center>
-<!--        <div class="spinner" id='spinner'></div> -->
-        <div class="emscripten" id="status">Downloading...</div>
-        <div class="emscripten">
-            <progress value="0" max="100" id="progress"></progress>
+<div class="stars">
+  <header class="top">
+    <div class="wrap">
+      <a class="brand" href="#">Perdüe dans l'espace</a>
+      <nav class="links" aria-label="Sections">
+        <a href="#histoire">L'histoire</a>
+        <a href="#mondes">Les mondes</a>
+        <a href="#jouer">Comment jouer</a>
+        <a href="#classe">En classe</a>
+        <a href="#projet">Le projet</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="wrap">
+      <h1>Perdüe dans l'espace</h1>
+      <div class="hero-img">
+        <img src="assets/titre.jpg" width="1600" height="900"
+             alt="Écran titre du jeu « Perdüe dans l'espace » : une dizaine de personnages souriants dessinés sur un ciel étoilé.">
+      </div>
+
+      <div class="hero-body">
+        <div>
+          <p class="tagline">Un éclair blanc, un grand boum… et tout le monde se met à parler français autrement.</p>
+          <p class="lead">Un petit jeu d'aventure rétro, gratuit, pour découvrir des façons de parler sans genrer les personnes, et la manière dont les langues du monde rangent les mots.</p>
         </div>
-    </div>
-
-
-    <canvas class="emscripten" id="canvas"
-width="1px"
-height="1px"
-    oncontextmenu="event.preventDefault()" tabindex=1>
-    </canvas>
-
-    <div id=html></div>
-
-    <div id=crt  class=bottomright >
-
-        <div id="system" hidden>
-            <div class="button-container">
-                <button id="aiostop" disabled>AIO ⏏︎</button>
-                <button id="aiopaused_true" disabled>AIO ■</button>
-                <button id="aiopaused_false" disabled>AIO ▶</button>
-                <button id="pygame_mixer_music_pause" disabled>Music ■</button>
-            </div>
-
-            <div class="button-container">
-                <div id=load_min>min</div>
-                <div id=load_avg>avg</div>
-                <div id=load_max>max</div>
-              <button id="load_rst" disabled>RESET</button>
-            </div>
-
-            <div id="level">(battery level unknown)</div>
-            <div id="stateBattery">(charging state unknown)</div>
-
+        <div class="cta">
+          <a class="btn" href="jouer/">Jouer maintenant <span class="arrow" aria-hidden="true">▶</span></a>
+          <ul class="facts" aria-label="En bref">
+            <li>Gratuit</li><li>Dans le navigateur</li><li>6 mondes</li><li>Clavier</li>
+          </ul>
+          <p class="touch-note">Le jeu se joue au clavier : ouvrez cette page sur un ordinateur pour y jouer.</p>
+          <a class="btn-ghost" href="#histoire">En savoir plus ↓</a>
         </div>
+      </div>
+    </div>
+  </section>
+</div>
 
-        <div id=box class="emscripten_border" hidden=true>
+<main>
 
-            <div id="info" class="trinfo"></div>
-
-            <iframe id="iframe" class="framed" name="iframe"
-width="470px" height="90%"
-allowtransparency="true"
-style="z-index: 10;"
-style="background: #FFFFFF;"
-frameborder="1"
-                allowfullscreen="true"
-                webkitallowfullscreen="true"
-                msallowfullscreen="true"
-                mozallowfullscreen="true"
-                sandbox="allow-same-origin allow-top-navigation allow-scripts allow-pointer-lock"
-                allow="autoplay; fullscreen *; geolocation; microphone; camera; midi; monetization; xr-spatial-tracking; gamepad; gyroscope; accelerometer; xr; cross-origin-isolated"
-                src="https://pygame-web.github.io/archives/0.9/empty.html"
-                scrolling="yes">
-            </iframe>
+  <!-- ============ HISTOIRE ============ -->
+  <section class="block" id="histoire">
+    <div class="wrap story">
+      <div class="prose">
+        <p class="kicker">L'histoire</p>
+        <h2>Charlie allait juste acheter son pain.</h2>
+        <p>Un éclair, un son étrange, et le voilà dans un monde presque identique au sien. Presque, parce qu'ici tout le monde ajoute un <strong>« i »</strong> à la fin des mots, et que personne ne semble trouver ça bizarre.</p>
+        <p>Pour rentrer chez lui, Charlie doit aider Gandalf, linguiste des univers, à retrouver <em>quelle</em> langue est la sienne. Il va parler avec les habitantis, résoudre des énigmes et remplir son carnet de notes, d'univers en univers.</p>
+        <div class="cast">
+          <div class="who"><img src="assets/charlie.webp" alt="" width="56" height="72"><div><b>Charlie</b><span>perdu, et un peu grognon</span></div></div>
+          <div class="who"><img src="assets/gandalf.webp" alt="" width="56" height="72"><div><b>Gandalf</b><span>linguiste des univers</span></div></div>
         </div>
-
+      </div>
+      <figure class="shot" style="margin:0">
+        <img src="assets/dialogue.jpg" width="960" height="390" loading="lazy"
+             alt="Scène du jeu : Gandalf explique « Joueusi, amicali, conseilleiri, paysanni, ou paysannis au pluriel… Enfin, vous voyez, c'est pas compliqué. »">
+      </figure>
     </div>
+  </section>
 
+  <!-- ============ MONDES ============ -->
+  <section class="block worlds-bg" id="mondes">
+    <div class="wrap">
+      <p class="kicker">Les mondes</p>
+      <h2>Six univers, six façons de faire</h2>
+      <div class="prose"><p>Chaque monde s'inspire de propositions réelles pour le français, ou de systèmes attestés dans les langues du monde. Rien n'est imposé : on observe, on compare, on s'amuse.</p></div>
 
-    <div id="dlg" hidden>
-        <input type="file" id="dlg_multifile" multiple accept="image/*">
-        <label for="dlg_multifile">Select files</label>
+      <div class="part-title"><span class="pixel">Mondes 1 à 3</span><h3>Parler français sans genrer les personnes</h3></div>
+      <div class="grid3">
+        <article class="world">
+          <div class="num">MONDE 1</div>
+          <h3>La solution en « i »</h3>
+          <p>On part de la forme féminine et on ajoute un « i », ou « is » au pluriel.</p>
+          <div class="say">joueusi, amicali, paysannis</div>
+        </article>
+        <article class="world">
+          <div class="num">MONDE 2</div>
+          <h3>Le français inclusif d'Alpheratz</h3>
+          <p>Un genre neutre, avec de nouveaux pronoms et de nouvelles terminaisons.</p>
+          <div class="say">lu portaer est malade, al…</div>
+        </article>
+        <article class="world">
+          <div class="num">MONDE 3</div>
+          <h3>L'univers de Borde</h3>
+          <p>Les mots ne laissent plus deviner le genre de la personne dont on parle.</p>
+          <div class="say">eune chaufeureuse</div>
+        </article>
+      </div>
+
+      <div class="part-title"><span class="pixel">Mondes 4 à 6</span><h3>Comment les langues du monde rangent les mots</h3></div>
+      <div class="grid3">
+        <article class="world">
+          <div class="num">MONDE 4</div>
+          <h3>Les classificateurs</h3>
+          <p>Un petit mot indique la forme de l'objet : rond, long, poudreux… Environ un tiers des langues du monde font ça.</p>
+          <div class="say">farine et poussière : même étiquette</div>
+        </article>
+        <article class="world">
+          <div class="num">MONDE 5</div>
+          <h3>Les classes nominales</h3>
+          <p>La marque de la classe se répète sur tous les mots qui s'accordent dans la phrase.</p>
+          <div class="say">ç-lait pour mon ù-beau-frère</div>
+        </article>
+        <article class="world">
+          <div class="num">MONDE 6</div>
+          <h3>Trois genres grammaticaux</h3>
+          <p>Masculin, féminin… et neutre. Même avec des genres, les mots ne tombent pas dans les mêmes boîtes d'une langue à l'autre.</p>
+          <div class="say">PIM · PAM · POUM</div>
+        </article>
+      </div>
+
+      <div class="gallery">
+        <figure><img src="assets/monde1.jpg" width="960" height="540" loading="lazy" alt="Vue du premier monde : un village avec une rivière et des personnages."><figcaption>Le premier monde, où tout commence.</figcaption></figure>
+        <figure><img src="assets/monde5.jpg" width="960" height="540" loading="lazy" alt="Vue d'une place de ville avec des fontaines et des immeubles en briques."><figcaption>La ville du cinquième monde.</figcaption></figure>
+        <figure><img src="assets/monde6.jpg" width="960" height="540" loading="lazy" alt="Vue d'un paysage d'îles et de lacs."><figcaption>Les lacs du sixième monde.</figcaption></figure>
+        <figure><img src="assets/monde4.jpg" width="960" height="540" loading="lazy" alt="Vue du quatrième monde avec des maisons et des chemins."><figcaption>Le quatrième monde et ses classificateurs.</figcaption></figure>
+      </div>
     </div>
+  </section>
 
-    <div id="pyconsole">
-        <div id="terminal" tabIndex=1 align="left"></div>
+  <!-- ============ COMMENT JOUER ============ -->
+  <section class="block" id="jouer">
+    <div class="wrap howto">
+      <div>
+        <p class="kicker">Comment jouer</p>
+        <h2>Tout se joue au clavier</h2>
+        <ul class="keys">
+          <li>se déplacer <span><kbd>←</kbd> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>→</kbd></span></li>
+          <li>ouvrir les notes <kbd>P</kbd></li>
+          <li>commencer · passer les dialogues <kbd>Entrée</kbd></li>
+        </ul>
+      </div>
+      <div class="prose">
+        <h3 style="margin-top:6px">Avant de lancer</h3>
+        <ul class="checklist">
+          <li>Un <strong>ordinateur</strong> avec clavier et un navigateur récent (Firefox, Chrome, Edge ou Safari).</li>
+          <li>Le <strong>premier chargement</strong> peut prendre une minute : le jeu se télécharge une fois, puis démarre.</li>
+          <li>Quand la page le demande, <strong>cliquez dans la fenêtre du jeu</strong> pour le lancer, puis appuyez sur <kbd>Entrée</kbd>.</li>
+          <li>Le jeu a du <strong>son</strong> : pensez aux écouteurs en classe.</li>
+        </ul>
+        <p style="margin-top:22px"><a class="btn" href="jouer/">Lancer le jeu <span class="arrow" aria-hidden="true">▶</span></a></p>
+      </div>
     </div>
+  </section>
 
-    <script type="application/javascript">
+  <!-- ============ EN CLASSE ============ -->
+  <section class="block" id="classe" style="padding-top:0">
+    <div class="wrap">
+      <div class="teach">
+        <div>
+          <p class="kicker">En classe, en médiathèque, en atelier</p>
+          <h2>Un point de départ pour parler de la langue</h2>
+          <p>Le jeu ne cherche pas à dire comment il faut parler. Il montre que les langues changent, qu'elles s'organisent de façons très différentes, et que ces choix ont des effets. De quoi lancer une discussion à partir d'exemples concrets.</p>
+        </div>
+        <div>
+          <h3>Notions abordées</h3>
+          <ul>
+            <li>Genre grammatical et genre des personnes</li>
+            <li>Masculin générique et ses effets</li>
+            <li>Propositions de langage non genré en français</li>
+            <li>Classificateurs, classes nominales, systèmes à 2 ou 3 genres</li>
+            <li>Diversité et évolution des langues</li>
+          </ul>
+          <!-- À COMPLÉTER : ajouter le lien vers la fiche pédagogique quand elle existera -->
+          <p style="margin-top:16px">Pour prolonger : <a class="inline" href="#bd">la BD du projet EVOGRAM</a>, à lire en ligne ou en PDF.</p>
+          <p style="margin-top:16px">Vous l'utilisez avec un groupe ? <a class="inline" href="mailto:CONTACT@EXEMPLE.FR?subject=Perdüe%20dans%20l'espace">Racontez-nous comment ça s'est passé</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    async function custom_onload(debug_hidden) {
-        // this is called before anything python is loaded
-        // make your js customization here
-        console.log(__FILE__, "custom_onload")
+  <!-- ============ PROJET ============ -->
+  <section class="block" id="projet" style="padding-top:24px">
+    <div class="wrap project">
+      <div class="prose">
+        <p class="kicker">Le projet</p>
+        <h2>Un jeu issu de la recherche</h2>
+        <p>« Perdüe dans l'espace » a été conçu dans le cadre du projet de recherche <strong>EVOGRAM</strong>, financé par l'Agence nationale de la recherche. EVOGRAM étudie le rôle des facteurs linguistiques et non linguistiques dans l'évolution des systèmes de classification nominale : genre grammatical, classificateurs, classes nominales… exactement ce que Charlie traverse de monde en monde.</p>
+        <p>Le code du jeu est ouvert et disponible sur <a href="https://github.com/mamuszkina/Perdui-dans-l-espace">GitHub</a>.</p>
 
-        pyconsole.hidden = debug_hidden
-        system.hidden = debug_hidden
-        transfer.hidden = debug_hidden
-        info.hidden = debug_hidden
-        box.hidden =  debug_hidden
+        <div class="bd" id="bd">
+          <p class="bd-kicker pixel">Pour aller plus loin</p>
+          <h3>Le projet EVOGRAM en bande dessinée</h3>
+          <p>Pourquoi le français range ses noms en masculin et féminin, le swahili en « humains » ou « plantes », et le mandarin selon la forme des objets ? Une BD pour comprendre comment les langues structurent la réalité.</p>
+          <p class="bd-credits">Scénario de Benoît Connin, dessin de KiWeen</p>
+          <div class="bd-links">
+            <a class="bd-btn" href="https://lejournal.cnrs.fr/nos-blogs/focus-sciences/une-bd-pour-comprendre-comment-les-langues-structurent-la-realite">Lire la BD en ligne</a>
+            <a class="bd-btn bd-btn-alt" href="https://www.univ-lyon2.fr/medias/fichier/projet-evogram-bd-web_1734428776694-pdf">Télécharger le PDF</a>
+          </div>
+        </div>
+      </div>
+      <aside class="credits" aria-label="Crédits">
+        <!-- À COMPLÉTER : noms et rôles -->
+        <dl>
+          <dt>Conception</dt><dd>[à compléter]</dd>
+          <dt>Développement</dt><dd>[à compléter]</dd>
+          <dt>Illustrations</dt><dd>[à compléter]</dd>
+          <dt>Musique</dt><dd>[à compléter]</dd>
+        </dl>
+        <div class="funders"><span>ANR</span><span>CNRS</span></div>
+        <p style="margin:14px 0 0;font-size:14px;color:var(--muted)">Ce travail a bénéficié d'une aide de l'État gérée par l'Agence nationale de la recherche au titre du projet EVOGRAM (ANR-20-CE27-0021).</p>
+      </aside>
+    </div>
+  </section>
 
-    }
+</main>
 
-    function custom_prerun(){
-        // no python main and no (MEMFS + VFS) yet.
-        console.log(__FILE__, "custom_prerun")
-
-    }
-
-    function custom_postrun(){
-        // python main and no VFS filesystem yet.
-        console.log(__FILE__, "custom_postrun")
-
-        // prevent ff horizontal scroll
-        window.addEventListener("keydown", function(e) {
-            if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
-                if (!python.config.debug)
-                    e.preventDefault();
-            }
-        }, false);
-
-    }
-
-    function debug() {
-        // allow to gain access to dev tools from js console
-        // but only on desktop. difficult to reach when in iframe
-        python.config.debug = true
-        custom_onload(false)
-        Module.PyRun_SimpleString("shell.uptime()")
-        window_resize()
-    }
-
-    function info_inline(data){
-        document.getElementById("info").innerHTML = data
-    }
-
-    function info_online(url) {
-        // display info about current APK
-        fetch( url /*, options */)
-            .then((response) => response.text())
-            .then((html) => {
-                info_inline(html);
-        })
-        .catch((error) => {
-            console.warn(error);
-        });
-    }
-
-    function frame_online(url) {
-        window.frames["iframe"].location = url;
-    }
-
-    </script>
+<div class="stars">
+  <div class="final-cta wrap">
+    <p>Prêt·e à aider Charlie à rentrer chez lui ?</p>
+    <a class="btn" href="jouer/">Jouer maintenant <span class="arrow" aria-hidden="true">▶</span></a>
+  </div>
+  <footer>
+    <div class="wrap">
+      <span>Perdüe dans l'espace · projet ANR EVOGRAM</span>
+      <span><a href="https://github.com/mamuszkina/Perdui-dans-l-espace">Code source</a> · <a href="mailto:CONTACT@EXEMPLE.FR">Contact</a></span>
+    </div>
+  </footer>
+</div>
 
 </body>
 </html>
