@@ -197,6 +197,12 @@
   .bd-btn:hover { background: var(--space-deep); border-color: var(--space-deep); }
   .bd-btn-alt { background: transparent; color: var(--space); }
   .bd-btn-alt:hover { background: #eaf0e1; color: var(--space-deep); }
+  .bd-row {
+    margin-top: 28px; display: grid; gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .bd-row .bd { margin-top: 0; display: flex; flex-direction: column; }
+  .bd-row .bd-links { margin-top: auto; padding-top: 4px; }
 
   footer { padding: 40px 0 48px; font-size: 15px; }
   footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
@@ -406,6 +412,7 @@
         <p>« Perdüe dans l'espace » a été conçu dans le cadre du projet de recherche <strong>EVOGRAM</strong>, financé par l'Agence nationale de la recherche. EVOGRAM étudie le rôle des facteurs linguistiques et non linguistiques dans l'évolution des systèmes de classification nominale : genre grammatical, classificateurs, classes nominales… exactement ce que Charlie traverse de monde en monde.</p>
         <p>Le code du jeu est ouvert et disponible sur <a href="https://github.com/mamuszkina/Perdui-dans-l-espace">GitHub</a>.</p>
 
+        <div class="bd-row">
         <div class="bd" id="bd">
           <p class="bd-kicker pixel">Pour aller plus loin</p>
           <h3>Le projet EVOGRAM en bande dessinée</h3>
@@ -424,6 +431,7 @@
           <div class="bd-links">
             <a class="bd-btn" href="https://marctang.github.io/evo-game/#/quiz">Faire le quiz</a>
           </div>
+        </div>
         </div>
       </div>
       <aside class="credits" aria-label="Crédits">
