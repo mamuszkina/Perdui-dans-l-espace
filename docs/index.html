@@ -197,8 +197,9 @@
   .bd-btn:hover { background: var(--space-deep); border-color: var(--space-deep); }
   .bd-btn-alt { background: transparent; color: var(--space); }
   .bd-btn-alt:hover { background: #eaf0e1; color: var(--space-deep); }
-  .project-side { align-self: start; }
-  .project-side .bd { margin-top: 24px; }
+  .project { row-gap: 28px; }
+  .project > .bd { margin-top: 0; display: flex; flex-direction: column; }
+  .project > .bd .bd-links { margin-top: auto; padding-top: 4px; }
 
   footer { padding: 40px 0 48px; font-size: 15px; }
   footer .wrap { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
@@ -407,19 +408,7 @@
         <h2>Un jeu issu de la recherche</h2>
         <p>« Perdüe dans l'espace » a été conçu dans le cadre du projet de recherche <strong>EVOGRAM</strong>, financé par l'Agence nationale de la recherche. EVOGRAM étudie le rôle des facteurs linguistiques et non linguistiques dans l'évolution des systèmes de classification nominale : genre grammatical, classificateurs, classes nominales… exactement ce que Charlie traverse de monde en monde.</p>
         <p>Le code du jeu est ouvert et disponible sur <a href="https://github.com/mamuszkina/Perdui-dans-l-espace">GitHub</a>.</p>
-
-        <div class="bd" id="bd">
-          <p class="bd-kicker pixel">Pour aller plus loin</p>
-          <h3>Le projet EVOGRAM en bande dessinée</h3>
-          <p>Pourquoi le français range ses noms en masculin et féminin, le swahili en « humains » ou « plantes », et le mandarin selon la forme des objets ? Une BD pour comprendre comment les langues structurent la réalité.</p>
-          <p class="bd-credits">Scénario de Benoît Connin, dessin de KiWeen</p>
-          <div class="bd-links">
-            <a class="bd-btn" href="https://lejournal.cnrs.fr/nos-blogs/focus-sciences/une-bd-pour-comprendre-comment-les-langues-structurent-la-realite">Lire la BD en ligne</a>
-            <a class="bd-btn bd-btn-alt" href="https://www.univ-lyon2.fr/medias/fichier/projet-evogram-bd-web_1734428776694-pdf">Télécharger le PDF</a>
-          </div>
-        </div>
       </div>
-      <div class="project-side">
       <aside class="credits" aria-label="Crédits">
         <!-- À COMPLÉTER : noms et rôles -->
         <dl>
@@ -431,7 +420,16 @@
         <div class="funders"><span>ANR</span><span>CNRS</span></div>
         <p style="margin:14px 0 0;font-size:14px;color:var(--muted)">Ce travail a bénéficié d'une aide de l'État gérée par l'Agence nationale de la recherche au titre du projet EVOGRAM (ANR-20-CE27-0021).</p>
       </aside>
-
+        <div class="bd" id="bd">
+          <p class="bd-kicker pixel">Pour aller plus loin</p>
+          <h3>Le projet EVOGRAM en bande dessinée</h3>
+          <p>Pourquoi le français range ses noms en masculin et féminin, le swahili en « humains » ou « plantes », et le mandarin selon la forme des objets ? Une BD pour comprendre comment les langues structurent la réalité.</p>
+          <p class="bd-credits">Scénario de Benoît Connin, dessin de KiWeen</p>
+          <div class="bd-links">
+            <a class="bd-btn" href="https://lejournal.cnrs.fr/nos-blogs/focus-sciences/une-bd-pour-comprendre-comment-les-langues-structurent-la-realite">Lire la BD en ligne</a>
+            <a class="bd-btn bd-btn-alt" href="https://www.univ-lyon2.fr/medias/fichier/projet-evogram-bd-web_1734428776694-pdf">Télécharger le PDF</a>
+          </div>
+        </div>
         <div class="bd" id="quiz">
           <p class="bd-kicker pixel">Testez-vous</p>
           <h3>Le quiz EVOGRAM</h3>
@@ -440,7 +438,6 @@
             <a class="bd-btn" href="https://marctang.github.io/evo-game/#/quiz">Faire le quiz</a>
           </div>
         </div>
-      </div>
     </div>
   </section>
 
